@@ -38,7 +38,7 @@
 
 ## 当前进度
 
-当前阶段：Spring Boot 项目骨架。
+当前阶段：通用基础能力。
 
 已完成：
 
@@ -51,13 +51,22 @@
 - [x] 创建基础包结构
 - [x] 添加应用配置文件
 - [x] 验证 `mvn test`
+- [x] 添加统一响应体 `Result`
+- [x] 添加分页响应体 `PageResult`
+- [x] 添加业务异常 `BusinessException`
+- [x] 添加全局异常处理 `GlobalExceptionHandler`
+- [x] 添加参数校验异常处理
+- [x] 添加 Web 层异常响应测试
+- [x] 添加 Web、MyBatis、Redis、RabbitMQ 配置入口
+- [x] 补全开发环境配置
 
 下一阶段：
 
-- [ ] 统一响应体 `Result`
-- [ ] 分页响应体 `PageResult`
-- [ ] 业务异常 `BusinessException`
-- [ ] 全局异常处理 `GlobalExceptionHandler`
+- [ ] 创建数据库 `admin_system`
+- [ ] 添加 Flyway 初始化迁移
+- [ ] 创建系统用户、角色、菜单、部门等基础表
+- [ ] 插入初始化数据
+- [ ] 验证 Flyway 自动建表
 
 ## 文档
 
@@ -89,7 +98,7 @@ test: add user service tests
 
 ## 本地启动
 
-当前项目已经创建 Spring Boot 基础骨架。
+当前项目已经创建 Spring Boot 基础骨架和通用基础能力。
 
 ### 运行测试
 
@@ -109,7 +118,7 @@ mvn spring-boot:run
 http://localhost:8080
 ```
 
-当前阶段还没有业务接口，只验证 Spring Boot 应用能启动。
+当前阶段还没有业务接口。`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理和基础配置入口。
 
 ## 目录规划
 
@@ -121,8 +130,8 @@ AdminSystem/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/example/admin/
-│   │   │   ├── common/
-│   │   │   ├── config/
+│   │   │   ├── common/      # 统一响应、分页响应、业务异常、全局异常
+│   │   │   ├── config/      # Web、MyBatis、Redis、RabbitMQ 配置
 │   │   │   ├── security/
 │   │   │   └── module/
 │   │   │       ├── auth/
