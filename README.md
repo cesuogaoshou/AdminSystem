@@ -56,12 +56,7 @@
 - [ ] 添加应用配置文件
 - [ ] 验证项目能启动
 
-## 文档
 
-| 文档 | 说明 |
-|------|------|
-| [AdminSystem-Spec.md](./AdminSystem-Spec.md) | 完整项目规格文档 |
-| [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md) | 开发流程和提交约定 |
 
 ## 开发流程
 
