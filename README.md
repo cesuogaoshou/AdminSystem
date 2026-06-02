@@ -38,25 +38,34 @@
 
 ## 当前进度
 
-当前阶段：项目初始化。
+当前阶段：Spring Boot 项目骨架。
 
 已完成：
 
 - [x] 创建 Git 仓库
 - [x] 绑定 GitHub 远程仓库
 - [x] 添加基础 Git 配置文件
-- [x] 添加开发流程约定文档
 - [x] 添加项目规格文档
+- [x] 创建 Spring Boot Maven 项目骨架
+- [x] 添加基础依赖
+- [x] 创建基础包结构
+- [x] 添加应用配置文件
+- [x] 验证 `mvn test`
 
 下一阶段：
 
-- [ ] 创建 Spring Boot Maven 项目骨架
-- [ ] 配置基础依赖
-- [ ] 创建基础包结构
-- [ ] 添加应用配置文件
-- [ ] 验证项目能启动
+- [ ] 统一响应体 `Result`
+- [ ] 分页响应体 `PageResult`
+- [ ] 业务异常 `BusinessException`
+- [ ] 全局异常处理 `GlobalExceptionHandler`
 
+## 文档
 
+| 文档 | 说明 |
+|------|------|
+| [AdminSystem-Spec.md](./AdminSystem-Spec.md) | 完整项目规格文档 |
+
+本地学习笔记和路线图放在 `docs/` 目录中，该目录不上传到 GitHub。
 
 ## 开发流程
 
@@ -67,36 +76,65 @@ git status
 git add .
 git commit -m "<type>: <summary>"
 git push
+```
+
 提交信息示例：
 
-
+```text
 chore: initialize spring boot project
 docs: update project roadmap
 feat: add global response wrapper
 test: add user service tests
-本地启动
-当前还未创建 Spring Boot 项目，启动方式待补充。
+```
 
-后续计划支持：
+## 本地启动
 
+当前项目已经创建 Spring Boot 基础骨架。
 
+### 运行测试
+
+```bash
+mvn test
+```
+
+### 启动应用
+
+```bash
 mvn spring-boot:run
-以及：
+```
 
+启动后默认端口：
 
-docker compose up -d
-目录规划
+```text
+http://localhost:8080
+```
 
+当前阶段还没有业务接口，只验证 Spring Boot 应用能启动。
+
+## 目录规划
+
+```text
 AdminSystem/
 ├── AdminSystem-Spec.md
 ├── README.md
-├── docs/
-│   └── DEVELOPMENT.md
+├── pom.xml
 ├── src/
 │   ├── main/
-│   │   ├── java/
+│   │   ├── java/com/example/admin/
+│   │   │   ├── common/
+│   │   │   ├── config/
+│   │   │   ├── security/
+│   │   │   └── module/
+│   │   │       ├── auth/
+│   │   │       ├── user/
+│   │   │       ├── role/
+│   │   │       ├── menu/
+│   │   │       ├── dept/
+│   │   │       ├── log/
+│   │   │       └── dict/
 │   │   └── resources/
 │   └── test/
-│       └── java/
-└── pom.xml
-当前 src/ 和 pom.xml 会在下一阶段创建。
+│       ├── java/
+│       └── resources/
+└── docs/               # 本地学习笔记，不上传 GitHub
+```
