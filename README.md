@@ -38,7 +38,7 @@
 
 ## 当前进度
 
-当前阶段：通用基础能力。
+当前阶段：数据库与 Flyway 初始化迁移。
 
 已完成：
 
@@ -59,14 +59,23 @@
 - [x] 添加 Web 层异常响应测试
 - [x] 添加 Web、MyBatis、Redis、RabbitMQ 配置入口
 - [x] 补全开发环境配置
+- [x] 创建数据库 `admin_system`
+- [x] 添加 Flyway 初始化迁移
+- [x] 创建系统用户、角色、菜单、部门等基础表
+- [x] 插入初始化部门、角色、用户、菜单和权限数据
+- [x] 添加操作日志表
+- [x] 添加数据字典表和初始字典数据
+- [x] 验证 Flyway 自动建表和迁移记录
 
 下一阶段：
 
-- [ ] 创建数据库 `admin_system`
-- [ ] 添加 Flyway 初始化迁移
-- [ ] 创建系统用户、角色、菜单、部门等基础表
-- [ ] 插入初始化数据
-- [ ] 验证 Flyway 自动建表
+- [ ] 用户实体、DTO、VO
+- [ ] 用户 Mapper 和 XML SQL
+- [ ] 用户 Service
+- [ ] 用户 Controller
+- [ ] 用户分页查询、新增、修改、逻辑删除
+- [ ] 部门实体、Mapper、Service、Controller
+- [ ] 部门树查询和删除校验
 
 ## 文档
 
@@ -98,7 +107,7 @@ test: add user service tests
 
 ## 本地启动
 
-当前项目已经创建 Spring Boot 基础骨架和通用基础能力。
+当前项目已经创建 Spring Boot 基础骨架、通用基础能力和数据库初始化迁移。
 
 ### 运行测试
 
@@ -118,7 +127,7 @@ mvn spring-boot:run
 http://localhost:8080
 ```
 
-当前阶段还没有业务接口。`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理和基础配置入口。
+当前阶段还没有业务接口。`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理和基础配置入口。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
 
 ## 目录规划
 
@@ -142,6 +151,7 @@ AdminSystem/
 │   │   │       ├── log/
 │   │   │       └── dict/
 │   │   └── resources/
+│   │       └── db/migration/      # Flyway 数据库迁移脚本
 │   └── test/
 │       ├── java/
 │       └── resources/
