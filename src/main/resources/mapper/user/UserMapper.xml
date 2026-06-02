@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.admin.module.user.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.example.admin.module.user.User">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long"/>
+            <arg column="username" javaType="java.lang.String"/>
+            <arg column="password" javaType="java.lang.String"/>
+            <arg column="nickname" javaType="java.lang.String"/>
+            <arg column="email" javaType="java.lang.String"/>
+            <arg column="phone" javaType="java.lang.String"/>
+            <arg column="gender" javaType="java.lang.Integer"/>
+            <arg column="avatar" javaType="java.lang.String"/>
+            <arg column="dept_id" javaType="java.lang.Long"/>
+            <arg column="status" javaType="java.lang.Integer"/>
+            <arg column="create_by" javaType="java.lang.String"/>
+            <arg column="create_time" javaType="java.time.LocalDateTime"/>
+            <arg column="update_by" javaType="java.lang.String"/>
+            <arg column="update_time" javaType="java.time.LocalDateTime"/>
+            <arg column="deleted" javaType="java.lang.Integer"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="UserVOResultMap" type="com.example.admin.module.user.UserVO">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long"/>
+            <arg column="username" javaType="java.lang.String"/>
+            <arg column="nickname" javaType="java.lang.String"/>
+            <arg column="email" javaType="java.lang.String"/>
+            <arg column="phone" javaType="java.lang.String"/>
+            <arg column="gender" javaType="java.lang.Integer"/>
+            <arg column="avatar" javaType="java.lang.String"/>
+            <arg column="dept_id" javaType="java.lang.Long"/>
+            <arg column="dept_name" javaType="java.lang.String"/>
+            <arg column="status" javaType="java.lang.Integer"/>
+            <arg column="create_time" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findById" resultMap="UserResultMap">
+        SELECT
+            id, username, password, nickname, email, phone, gender, avatar,
+            dept_id, status, create_by, create_time, update_by, update_time, deleted
+        FROM sys_user
+        WHERE id = #{id}
+          AND deleted = 0
+    </select>
+
+    <select id="findByUsername" resultMap="UserResultMap">
+        SELECT
+            id, username, password, nickname, email, phone, gender, avatar,
+            dept_id, status, create_by, create_time, update_by, update_time, deleted
+        FROM sys_user
+        WHERE username = #{username}
+          AND deleted = 0
+    </select>
+
+    <select id="countByUsername" resultType="int">
+        SELECT COUNT(*)
+        FROM sys_user
+        WHERE username = #{username}
+          AND deleted = 0
+    </select>
+
+    <select id="findPage" resultMap="UserVOResultMap">
+        SELECT
+            u.id,
+            u.username,
+            u.nickname,
+            u.email,
+            u.phone,
+            u.gender,
+            u.avatar,
+            u.dept_id,
+            d.name AS dept_name,
+            u.status,
+            u.create_time
+        FROM sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.id
+        WHERE u.deleted = 0
+        <if test="username != null and username != ''">
+            AND u.username LIKE CONCAT('%', #{username}, '%')
+        </if>
+        <if test="status != null">
+            AND u.status = #{status}
+        </if>
+        <if test="deptId != null">
+            AND u.dept_id = #{deptId}
+        </if>
+        ORDER BY u.create_time DESC
+    </select>
+
+</mapper>
