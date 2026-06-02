@@ -74,8 +74,6 @@ git commit -m "<type>: <summary>"
 git push
 提交信息示例：
 
-text
-
 
 chore: initialize spring boot project
 docs: update project roadmap
@@ -86,17 +84,13 @@ test: add user service tests
 
 后续计划支持：
 
-bash
 
 mvn spring-boot:run
 以及：
 
-bash
 
 docker compose up -d
 目录规划
-text
-
 
 AdminSystem/
 ├── AdminSystem-Spec.md
