@@ -30,3 +30,6 @@ application-secret.yml
 # Docker volumes / temp
 data/
 tmp/
+
+# docs
+/docs/
