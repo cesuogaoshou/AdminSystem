@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: admin-system
+
+  profiles:
+    active: dev
+
+server:
+  port: 8080
