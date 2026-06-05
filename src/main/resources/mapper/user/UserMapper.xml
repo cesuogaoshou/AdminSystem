@@ -100,6 +100,15 @@
           AND deleted = 0
     </update>
 
+    <update id="updateStatus">
+        UPDATE sys_user
+        SET
+            status = #{status},
+            update_by = 'system'
+        WHERE id = #{id}
+          AND deleted = 0
+    </update>
+
     <select id="findPage" resultMap="UserVOResultMap">
         SELECT
             u.id,

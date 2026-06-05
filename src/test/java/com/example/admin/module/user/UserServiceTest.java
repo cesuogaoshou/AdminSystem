@@ -177,4 +177,27 @@ class UserServiceTest {
                 .hasMessage("用户不存在");
     }
 
+    @Test
+    void changeStatusShouldUpdateUserStatusWhenUserExists() {
+        User existing = new User(
+                2L, "test_user", "encoded-password", "测试用户",
+                "test@example.com", "10000000002", 0, null,
+                2L, 1, "system", LocalDateTime.now(),
+                "system", LocalDateTime.now(), 0
+        );
+        when(userMapper.findById(2L)).thenReturn(existing);
+
+        userService.changeStatus(2L, 0);
+
+        verify(userMapper).findById(2L);
+        verify(userMapper).updateStatus(2L, 0);
+    }
+
+    @Test
+    void changeStatusShouldThrowBusinessExceptionWhenStatusInvalid() {
+        assertThatThrownBy(() -> userService.changeStatus(2L, 9))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("用户状态不正确");
+    }
+
 }

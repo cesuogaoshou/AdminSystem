@@ -95,4 +95,13 @@ public class UserService {
         getById(id);
         userMapper.deleteById(id);
     }
+
+    public void changeStatus(Long id, Integer status) {
+        if (status == null || (status != 0 && status != 1)) {
+            throw new BusinessException(400, "用户状态不正确");
+        }
+
+        getById(id);
+        userMapper.updateStatus(id, status);
+    }
 }
