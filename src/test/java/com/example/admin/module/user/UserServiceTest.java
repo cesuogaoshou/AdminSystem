@@ -7,12 +7,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +23,9 @@ class UserServiceTest {
 
     @Mock
     private UserMapper userMapper;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService userService;
@@ -66,4 +71,40 @@ class UserServiceTest {
         assertThat(result.rows()).containsExactly(userVO);
         verify(userMapper).findPage(query);
     }
+
+    @Test
+    void createShouldInsertUserWhenUsernameNotExists() {
+        UserSaveRequest request = new UserSaveRequest(
+                "new_user", "新用户", "new@example.com", "10000000001",
+                0, null, 2L, 1
+        );
+        when(userMapper.countByUsername("new_user")).thenReturn(0);
+        when(passwordEncoder.encode("123456")).thenReturn("encoded-default-password");
+
+        userService.create(request);
+
+        verify(userMapper).countByUsername("new_user");
+        verify(passwordEncoder).encode("123456");
+        verify(userMapper).insert(argThat(user ->
+                user.username().equals("new_user")
+                        && user.password().equals("encoded-default-password")
+                        && user.nickname().equals("新用户")
+                        && user.status().equals(1)
+                        && user.deleted().equals(0)
+        ));
+    }
+
+    @Test
+    void createShouldThrowBusinessExceptionWhenUsernameExists() {
+        UserSaveRequest request = new UserSaveRequest(
+                "admin", "管理员", "admin@example.com", "10000000000",
+                0, null, 2L, 1
+        );
+        when(userMapper.countByUsername("admin")).thenReturn(1);
+
+        assertThatThrownBy(() -> userService.create(request))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("用户名已存在");
+    }
+
 }

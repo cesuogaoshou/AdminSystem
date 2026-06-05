@@ -66,6 +66,16 @@
           AND deleted = 0
     </select>
 
+    <insert id="insert">
+    INSERT INTO sys_user (
+        username, password, nickname, email, phone, gender, avatar,
+        dept_id, status, create_by, update_by, deleted
+    ) VALUES (
+        #{username}, #{password}, #{nickname}, #{email}, #{phone}, #{gender}, #{avatar},
+        #{deptId}, #{status}, #{createBy}, #{updateBy}, #{deleted}
+    )
+    </insert>
+
     <select id="findPage" resultMap="UserVOResultMap">
         SELECT
             u.id,

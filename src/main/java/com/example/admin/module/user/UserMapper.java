@@ -14,5 +14,7 @@ public interface UserMapper {
 
     int countByUsername(@Param("username") String username);
 
+    int insert(User user);
+
     List<UserVO> findPage(UserQueryRequest query);
 }

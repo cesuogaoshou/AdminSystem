@@ -4,6 +4,7 @@ import com.example.admin.common.BusinessException;
 import com.example.admin.common.PageResult;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +12,14 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private final UserMapper userMapper;
+    private static final String DEFAULT_PASSWORD = "123456";
 
-    public UserService(UserMapper userMapper) {
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User getById(Long id) {
@@ -34,5 +39,31 @@ public class UserService {
         } finally {
             PageHelper.clearPage();
         }
+    }
+
+    public void create(UserSaveRequest request) {
+        if (userMapper.countByUsername(request.username()) > 0) {
+            throw new BusinessException(400, "用户名已存在");
+        }
+
+        User user = new User(
+                null,
+                request.username(),
+                passwordEncoder.encode(DEFAULT_PASSWORD),
+                request.nickname(),
+                request.email(),
+                request.phone(),
+                request.gender(),
+                request.avatar(),
+                request.deptId(),
+                request.status() == null ? 1 : request.status(),
+                "system",
+                null,
+                "system",
+                null,
+                0
+        );
+
+        userMapper.insert(user);
     }
 }
