@@ -107,4 +107,49 @@ class UserServiceTest {
                 .hasMessage("用户名已存在");
     }
 
+    @Test
+    void updateShouldUpdateUserWhenUserExists() {
+        User existing = new User(
+                1L, "admin", "encoded-password", "管理员",
+                "admin@example.com", "10000000000", 0, null,
+                2L, 1, "system", LocalDateTime.now(),
+                "system", LocalDateTime.now(), 0
+        );
+        UserSaveRequest request = new UserSaveRequest(
+                "ignored_username", "新昵称", "new@example.com", "10000000001",
+                1, "https://example.com/avatar.png", 3L, 1
+        );
+        when(userMapper.findById(1L)).thenReturn(existing);
+
+        userService.update(1L, request);
+
+        verify(userMapper).findById(1L);
+        verify(userMapper).update(argThat(user ->
+                user.id().equals(1L)
+                        && user.username().equals("admin")
+                        && user.password().equals("encoded-password")
+                        && user.nickname().equals("新昵称")
+                        && user.email().equals("new@example.com")
+                        && user.phone().equals("10000000001")
+                        && user.gender().equals(1)
+                        && user.avatar().equals("https://example.com/avatar.png")
+                        && user.deptId().equals(3L)
+                        && user.status().equals(1)
+                        && user.deleted().equals(0)
+        ));
+    }
+
+    @Test
+    void updateShouldThrowBusinessExceptionWhenUserNotFound() {
+        UserSaveRequest request = new UserSaveRequest(
+                "ignored_username", "新昵称", "new@example.com", "10000000001",
+                1, null, 3L, 1
+        );
+        when(userMapper.findById(99L)).thenReturn(null);
+
+        assertThatThrownBy(() -> userService.update(99L, request))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("用户不存在");
+    }
+
 }

@@ -16,5 +16,7 @@ public interface UserMapper {
 
     int insert(User user);
 
+    int update(User user);
+
     List<UserVO> findPage(UserQueryRequest query);
 }

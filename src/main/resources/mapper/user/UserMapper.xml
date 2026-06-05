@@ -76,6 +76,21 @@
     )
     </insert>
 
+    <update id="update">
+        UPDATE sys_user
+        SET
+            nickname = #{nickname},
+            email = #{email},
+            phone = #{phone},
+            gender = #{gender},
+            avatar = #{avatar},
+            dept_id = #{deptId},
+            status = #{status},
+            update_by = #{updateBy}
+        WHERE id = #{id}
+          AND deleted = 0
+    </update>
+
     <select id="findPage" resultMap="UserVOResultMap">
         SELECT
             u.id,

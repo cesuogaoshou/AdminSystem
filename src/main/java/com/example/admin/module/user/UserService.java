@@ -66,4 +66,28 @@ public class UserService {
 
         userMapper.insert(user);
     }
+
+    public void update(Long id, UserSaveRequest request) {
+        User existing = getById(id);
+
+        User user = new User(
+                existing.id(),
+                existing.username(),
+                existing.password(),
+                request.nickname(),
+                request.email(),
+                request.phone(),
+                request.gender(),
+                request.avatar(),
+                request.deptId(),
+                request.status() == null ? existing.status() : request.status(),
+                existing.createBy(),
+                existing.createTime(),
+                "system",
+                existing.updateTime(),
+                existing.deleted()
+        );
+
+        userMapper.update(user);
+    }
 }
