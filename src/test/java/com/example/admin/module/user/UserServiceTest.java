@@ -152,4 +152,29 @@ class UserServiceTest {
                 .hasMessage("用户不存在");
     }
 
+    @Test
+    void deleteShouldMarkUserDeletedWhenUserExists() {
+        User existing = new User(
+                2L, "test_user", "encoded-password", "测试用户",
+                "test@example.com", "10000000002", 0, null,
+                2L, 1, "system", LocalDateTime.now(),
+                "system", LocalDateTime.now(), 0
+        );
+        when(userMapper.findById(2L)).thenReturn(existing);
+
+        userService.delete(2L);
+
+        verify(userMapper).findById(2L);
+        verify(userMapper).deleteById(2L);
+    }
+
+    @Test
+    void deleteShouldThrowBusinessExceptionWhenUserNotFound() {
+        when(userMapper.findById(99L)).thenReturn(null);
+
+        assertThatThrownBy(() -> userService.delete(99L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("用户不存在");
+    }
+
 }

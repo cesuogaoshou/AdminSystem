@@ -18,5 +18,7 @@ public interface UserMapper {
 
     int update(User user);
 
+    int deleteById(@Param("id") Long id);
+
     List<UserVO> findPage(UserQueryRequest query);
 }

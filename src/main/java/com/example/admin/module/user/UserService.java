@@ -90,4 +90,9 @@ public class UserService {
 
         userMapper.update(user);
     }
+
+    public void delete(Long id) {
+        getById(id);
+        userMapper.deleteById(id);
+    }
 }
