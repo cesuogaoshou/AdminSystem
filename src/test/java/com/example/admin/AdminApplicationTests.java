@@ -1,5 +1,6 @@
 package com.example.admin;
 
+import com.example.admin.module.dept.DeptMapper;
 import com.example.admin.module.user.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
                 + "org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration"
 })
 class AdminApplicationTests {
+
+    @MockitoBean
+    private DeptMapper deptMapper;
 
     @MockitoBean
     private UserMapper userMapper;
