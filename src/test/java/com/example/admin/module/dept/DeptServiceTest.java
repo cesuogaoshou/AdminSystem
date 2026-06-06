@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,5 +48,23 @@ class DeptServiceTest {
         List<DeptVO> tree = deptService.tree();
 
         assertThat(tree).isEmpty();
+    }
+
+    @Test
+    void createShouldInsertDeptWithDefaults() {
+        DeptSaveRequest request = new DeptSaveRequest(
+                null, "研发部", "研发负责人", "10000000003", null, null
+        );
+
+        deptService.create(request);
+
+        verify(deptMapper).insert(org.mockito.ArgumentMatchers.argThat(dept ->
+                dept.parentId().equals(0L)
+                        && dept.name().equals("研发部")
+                        && dept.leader().equals("研发负责人")
+                        && dept.phone().equals("10000000003")
+                        && dept.sortOrder().equals(0)
+                        && dept.status().equals(1)
+        ));
     }
 }

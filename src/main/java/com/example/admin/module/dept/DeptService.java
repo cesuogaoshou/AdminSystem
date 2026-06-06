@@ -13,6 +13,22 @@ public class DeptService {
         this.deptMapper = deptMapper;
     }
 
+    public void create(DeptSaveRequest request) {
+        Dept dept = new Dept(
+                null,
+                request.parentId() == null ? 0L : request.parentId(),
+                request.name(),
+                request.leader(),
+                request.phone(),
+                request.sortOrder() == null ? 0 : request.sortOrder(),
+                request.status() == null ? 1 : request.status(),
+                null,
+                null
+        );
+
+        deptMapper.insert(dept);
+    }
+
     public List<DeptVO> tree() {
         List<Dept> depts = deptMapper.findAll();
 

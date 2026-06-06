@@ -11,4 +11,6 @@ public interface DeptMapper {
     List<Dept> findAll();
 
     Dept findById(@Param("id") Long id);
+
+    int insert(Dept dept);
 }

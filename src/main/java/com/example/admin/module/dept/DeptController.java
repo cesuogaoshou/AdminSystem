@@ -1,7 +1,10 @@
 package com.example.admin.module.dept;
 
 import com.example.admin.common.Result;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +23,11 @@ public class DeptController {
     @GetMapping("/tree")
     public Result<List<DeptVO>> tree() {
         return Result.ok(deptService.tree());
+    }
+
+    @PostMapping
+    public Result<Void> create(@Valid @RequestBody DeptSaveRequest request) {
+        deptService.create(request);
+        return Result.ok();
     }
 }

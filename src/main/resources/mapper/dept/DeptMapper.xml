@@ -35,4 +35,12 @@
         WHERE id = #{id}
     </select>
 
+    <insert id="insert">
+        INSERT INTO sys_dept (
+            parent_id, name, leader, phone, sort_order, status
+        ) VALUES (
+            #{parentId}, #{name}, #{leader}, #{phone}, #{sortOrder}, #{status}
+        )
+    </insert>
+
 </mapper>
