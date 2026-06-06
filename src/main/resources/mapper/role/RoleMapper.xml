@@ -80,6 +80,12 @@
         WHERE id = #{id}
     </update>
 
+    <select id="countUsersByRoleId" resultType="int">
+        SELECT COUNT(*)
+        FROM sys_user_role
+        WHERE role_id = #{roleId}
+    </select>
+
     <select id="findPage" resultMap="RoleVOResultMap">
         SELECT
             id, name, code, description, status, sort_order, create_time

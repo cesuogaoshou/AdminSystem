@@ -60,4 +60,11 @@ class RoleMapperTest {
         assertThat(roles.getFirst().code()).isEqualTo("admin");
         assertThat(roles.getFirst().status()).isEqualTo(1);
     }
+
+    @Test
+    void countUsersByRoleIdShouldReturnAssignedUserCount() {
+        int count = roleMapper.countUsersByRoleId(1L);
+
+        assertThat(count).isEqualTo(1);
+    }
 }

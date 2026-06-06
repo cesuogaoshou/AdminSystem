@@ -22,5 +22,7 @@ public interface RoleMapper {
 
     int updateStatus(@Param("id") Long id, @Param("status") Integer status);
 
+    int countUsersByRoleId(@Param("roleId") Long roleId);
+
     List<RoleVO> findPage(RoleQueryRequest query);
 }

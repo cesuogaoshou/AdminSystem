@@ -1,6 +1,7 @@
 package com.example.admin;
 
 import com.example.admin.module.dept.DeptMapper;
+import com.example.admin.module.role.RoleMapper;
 import com.example.admin.module.user.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,9 @@ class AdminApplicationTests {
 
     @MockitoBean
     private UserMapper userMapper;
+
+    @MockitoBean
+    private RoleMapper roleMapper;
 
     @Test
     void contextLoads() {
