@@ -38,7 +38,7 @@
 
 ## 当前进度
 
-当前阶段：数据库与 Flyway 初始化迁移。
+当前阶段：用户与部门模块已完成，下一阶段进入角色、菜单与 RBAC。
 
 已完成：
 
@@ -66,16 +66,27 @@
 - [x] 添加操作日志表
 - [x] 添加数据字典表和初始字典数据
 - [x] 验证 Flyway 自动建表和迁移记录
+- [x] 添加用户实体、DTO、VO
+- [x] 添加用户 Mapper 和 XML SQL
+- [x] 添加用户 Service
+- [x] 添加用户 Controller
+- [x] 完成用户分页查询、新增、修改、逻辑删除、状态启停
+- [x] 添加部门实体、请求对象、VO
+- [x] 添加部门 Mapper 和 XML SQL
+- [x] 添加部门 Service
+- [x] 添加部门 Controller
+- [x] 完成部门树查询、新增、修改、删除校验
 
 下一阶段：
 
-- [ ] 用户实体、DTO、VO
-- [ ] 用户 Mapper 和 XML SQL
-- [ ] 用户 Service
-- [ ] 用户 Controller
-- [ ] 用户分页查询、新增、修改、逻辑删除
-- [ ] 部门实体、Mapper、Service、Controller
-- [ ] 部门树查询和删除校验
+- [ ] 角色实体、DTO、VO
+- [ ] 角色 Mapper、Service、Controller
+- [ ] 菜单实体、DTO、VO
+- [ ] 菜单 Mapper、Service、Controller
+- [ ] 菜单树组装
+- [ ] 用户分配角色
+- [ ] 角色分配菜单
+- [ ] 查询用户权限标识集合
 
 ## 文档
 
@@ -107,7 +118,15 @@ test: add user service tests
 
 ## 本地启动
 
-当前项目已经创建 Spring Boot 基础骨架、通用基础能力和数据库初始化迁移。
+当前项目已经创建 Spring Boot 基础骨架、通用基础能力、数据库初始化迁移、用户管理接口和部门管理接口。
+
+### 本地环境变量
+
+开发环境数据库密码不写入代码。PowerShell 中先设置：
+
+```powershell
+$env:ADMIN_DB_PASSWORD="你的本机 MySQL root 密码"
+```
 
 ### 运行测试
 
@@ -127,7 +146,29 @@ mvn spring-boot:run
 http://localhost:8080
 ```
 
-当前阶段还没有业务接口。`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理和基础配置入口。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
+`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理、基础配置、用户模块和部门模块。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
+
+### 已有接口
+
+用户接口：
+
+```text
+GET    /api/users
+GET    /api/users/{id}
+POST   /api/users
+PUT    /api/users/{id}
+DELETE /api/users/{id}
+PUT    /api/users/{id}/status
+```
+
+部门接口：
+
+```text
+GET    /api/depts/tree
+POST   /api/depts
+PUT    /api/depts/{id}
+DELETE /api/depts/{id}
+```
 
 ## 目录规划
 

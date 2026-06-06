@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource(properties = {
         "spring.datasource.url=jdbc:mysql://localhost:3306/admin_system?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
         "spring.datasource.username=root",
-        "spring.datasource.password=lilizj2580",
+        "spring.datasource.password=${ADMIN_DB_PASSWORD}",
         "spring.flyway.enabled=false"
 })
 class UserMapperTest {
