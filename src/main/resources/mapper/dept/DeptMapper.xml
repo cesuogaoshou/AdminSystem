@@ -43,4 +43,16 @@
         )
     </insert>
 
+    <update id="update">
+        UPDATE sys_dept
+        SET
+            parent_id = #{parentId},
+            name = #{name},
+            leader = #{leader},
+            phone = #{phone},
+            sort_order = #{sortOrder},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
 </mapper>

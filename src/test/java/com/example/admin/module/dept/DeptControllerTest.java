@@ -16,6 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(DeptController.class)
@@ -63,5 +64,24 @@ class DeptControllerTest {
                 .andExpect(jsonPath("$.code").value(200));
 
         verify(deptService).create(org.mockito.ArgumentMatchers.any(DeptSaveRequest.class));
+    }
+
+    @Test
+    void updateShouldCallServiceAndReturnOk() throws Exception {
+        mockMvc.perform(put("/api/depts/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "parentId": 1,
+                                  "name": "研发部",
+                                  "leader": "研发负责人",
+                                  "phone": "10000000003",
+                                  "sortOrder": 4,
+                                  "status": 1
+                                }
+                                """))
+                .andExpect(jsonPath("$.code").value(200));
+
+        verify(deptService).update(org.mockito.ArgumentMatchers.eq(2L), org.mockito.ArgumentMatchers.any(DeptSaveRequest.class));
     }
 }

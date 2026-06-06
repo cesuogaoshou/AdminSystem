@@ -1,5 +1,6 @@
 package com.example.admin.module.dept;
 
+import com.example.admin.common.BusinessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,31 @@ public class DeptService {
         );
 
         deptMapper.insert(dept);
+    }
+
+    public void update(Long id, DeptSaveRequest request) {
+        if (id.equals(request.parentId())) {
+            throw new BusinessException(400, "上级部门不能是自己");
+        }
+
+        Dept existing = deptMapper.findById(id);
+        if (existing == null) {
+            throw new BusinessException(404, "部门不存在");
+        }
+
+        Dept dept = new Dept(
+                existing.id(),
+                request.parentId() == null ? 0L : request.parentId(),
+                request.name(),
+                request.leader(),
+                request.phone(),
+                request.sortOrder() == null ? existing.sortOrder() : request.sortOrder(),
+                request.status() == null ? existing.status() : request.status(),
+                existing.createTime(),
+                existing.updateTime()
+        );
+
+        deptMapper.update(dept);
     }
 
     public List<DeptVO> tree() {

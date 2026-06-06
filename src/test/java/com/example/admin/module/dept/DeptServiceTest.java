@@ -6,10 +6,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.admin.common.BusinessException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,5 +69,54 @@ class DeptServiceTest {
                         && dept.sortOrder().equals(0)
                         && dept.status().equals(1)
         ));
+    }
+
+    @Test
+    void updateShouldUpdateDeptWhenDeptExists() {
+        LocalDateTime now = LocalDateTime.now();
+        Dept existing = new Dept(
+                2L, 1L, "技术部", "CTO", "10000000001",
+                2, 1, now, now
+        );
+        DeptSaveRequest request = new DeptSaveRequest(
+                1L, "研发部", "研发负责人", "10000000003", 4, 1
+        );
+        when(deptMapper.findById(2L)).thenReturn(existing);
+
+        deptService.update(2L, request);
+
+        verify(deptMapper).findById(2L);
+        verify(deptMapper).update(org.mockito.ArgumentMatchers.argThat(dept ->
+                dept.id().equals(2L)
+                        && dept.parentId().equals(1L)
+                        && dept.name().equals("研发部")
+                        && dept.leader().equals("研发负责人")
+                        && dept.phone().equals("10000000003")
+                        && dept.sortOrder().equals(4)
+                        && dept.status().equals(1)
+        ));
+    }
+
+    @Test
+    void updateShouldThrowBusinessExceptionWhenDeptNotFound() {
+        DeptSaveRequest request = new DeptSaveRequest(
+                1L, "研发部", "研发负责人", "10000000003", 4, 1
+        );
+        when(deptMapper.findById(99L)).thenReturn(null);
+
+        assertThatThrownBy(() -> deptService.update(99L, request))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("部门不存在");
+    }
+
+    @Test
+    void updateShouldThrowBusinessExceptionWhenParentIsSelf() {
+        DeptSaveRequest request = new DeptSaveRequest(
+                2L, "研发部", "研发负责人", "10000000003", 4, 1
+        );
+
+        assertThatThrownBy(() -> deptService.update(2L, request))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("上级部门不能是自己");
     }
 }
