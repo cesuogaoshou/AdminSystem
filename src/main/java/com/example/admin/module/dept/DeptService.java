@@ -55,6 +55,23 @@ public class DeptService {
         deptMapper.update(dept);
     }
 
+    public void delete(Long id) {
+        Dept existing = deptMapper.findById(id);
+        if (existing == null) {
+            throw new BusinessException(404, "部门不存在");
+        }
+
+        if (deptMapper.countByParentId(id) > 0) {
+            throw new BusinessException(400, "存在子部门，不能删除");
+        }
+
+        if (deptMapper.countUsersByDeptId(id) > 0) {
+            throw new BusinessException(400, "部门下存在用户，不能删除");
+        }
+
+        deptMapper.deleteById(id);
+    }
+
     public List<DeptVO> tree() {
         List<Dept> depts = deptMapper.findAll();
 

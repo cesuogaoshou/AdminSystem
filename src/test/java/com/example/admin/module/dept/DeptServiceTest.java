@@ -119,4 +119,60 @@ class DeptServiceTest {
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("上级部门不能是自己");
     }
+
+    @Test
+    void deleteShouldDeleteDeptWhenNoChildAndNoUser() {
+        LocalDateTime now = LocalDateTime.now();
+        Dept existing = new Dept(
+                3L, 1L, "产品部", "CPO", "10000000002",
+                3, 1, now, now
+        );
+        when(deptMapper.findById(3L)).thenReturn(existing);
+        when(deptMapper.countByParentId(3L)).thenReturn(0);
+        when(deptMapper.countUsersByDeptId(3L)).thenReturn(0);
+
+        deptService.delete(3L);
+
+        verify(deptMapper).deleteById(3L);
+    }
+
+    @Test
+    void deleteShouldThrowBusinessExceptionWhenDeptNotFound() {
+        when(deptMapper.findById(99L)).thenReturn(null);
+
+        assertThatThrownBy(() -> deptService.delete(99L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("部门不存在");
+    }
+
+    @Test
+    void deleteShouldThrowBusinessExceptionWhenDeptHasChildren() {
+        LocalDateTime now = LocalDateTime.now();
+        Dept existing = new Dept(
+                1L, 0L, "总公司", "CEO", "10000000000",
+                1, 1, now, now
+        );
+        when(deptMapper.findById(1L)).thenReturn(existing);
+        when(deptMapper.countByParentId(1L)).thenReturn(2);
+
+        assertThatThrownBy(() -> deptService.delete(1L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("存在子部门，不能删除");
+    }
+
+    @Test
+    void deleteShouldThrowBusinessExceptionWhenDeptHasUsers() {
+        LocalDateTime now = LocalDateTime.now();
+        Dept existing = new Dept(
+                2L, 1L, "技术部", "CTO", "10000000001",
+                2, 1, now, now
+        );
+        when(deptMapper.findById(2L)).thenReturn(existing);
+        when(deptMapper.countByParentId(2L)).thenReturn(0);
+        when(deptMapper.countUsersByDeptId(2L)).thenReturn(1);
+
+        assertThatThrownBy(() -> deptService.delete(2L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("部门下存在用户，不能删除");
+    }
 }

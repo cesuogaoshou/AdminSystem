@@ -55,4 +55,22 @@
         WHERE id = #{id}
     </update>
 
+    <select id="countByParentId" resultType="int">
+        SELECT COUNT(*)
+        FROM sys_dept
+        WHERE parent_id = #{parentId}
+    </select>
+
+    <select id="countUsersByDeptId" resultType="int">
+        SELECT COUNT(*)
+        FROM sys_user
+        WHERE dept_id = #{deptId}
+          AND deleted = 0
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM sys_dept
+        WHERE id = #{id}
+    </delete>
+
 </mapper>

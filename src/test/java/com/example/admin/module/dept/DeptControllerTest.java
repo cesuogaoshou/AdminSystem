@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -83,5 +84,13 @@ class DeptControllerTest {
                 .andExpect(jsonPath("$.code").value(200));
 
         verify(deptService).update(org.mockito.ArgumentMatchers.eq(2L), org.mockito.ArgumentMatchers.any(DeptSaveRequest.class));
+    }
+
+    @Test
+    void deleteShouldCallServiceAndReturnOk() throws Exception {
+        mockMvc.perform(delete("/api/depts/3"))
+                .andExpect(jsonPath("$.code").value(200));
+
+        verify(deptService).delete(3L);
     }
 }

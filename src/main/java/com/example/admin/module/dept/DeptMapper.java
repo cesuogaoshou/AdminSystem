@@ -15,4 +15,10 @@ public interface DeptMapper {
     int insert(Dept dept);
 
     int update(Dept dept);
+
+    int countByParentId(@Param("parentId") Long parentId);
+
+    int countUsersByDeptId(@Param("deptId") Long deptId);
+
+    int deleteById(@Param("id") Long id);
 }
