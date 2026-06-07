@@ -38,7 +38,7 @@
 
 ## 当前进度
 
-当前阶段：用户与部门模块已完成，下一阶段进入角色、菜单与 RBAC。
+当前阶段：角色、菜单与 RBAC 核心链路已完成，下一阶段进入登录认证与权限校验。
 
 已完成：
 
@@ -76,17 +76,24 @@
 - [x] 添加部门 Service
 - [x] 添加部门 Controller
 - [x] 完成部门树查询、新增、修改、删除校验
+- [x] 添加角色实体、请求对象、查询对象、VO
+- [x] 添加角色 Mapper、Service、Controller
+- [x] 完成角色分页查询、新增、修改、删除、状态变更
+- [x] 添加菜单实体、请求对象、VO
+- [x] 添加菜单 Mapper、Service、Controller
+- [x] 完成菜单树查询、新增、修改、删除校验
+- [x] 完成用户分配角色
+- [x] 完成角色分配菜单
+- [x] 完成用户权限标识集合查询
 
 下一阶段：
 
-- [ ] 角色实体、DTO、VO
-- [ ] 角色 Mapper、Service、Controller
-- [ ] 菜单实体、DTO、VO
-- [ ] 菜单 Mapper、Service、Controller
-- [ ] 菜单树组装
-- [ ] 用户分配角色
-- [ ] 角色分配菜单
-- [ ] 查询用户权限标识集合
+- [ ] 登录接口
+- [ ] JWT 生成、解析、校验
+- [ ] 当前用户上下文
+- [ ] 登录拦截器
+- [ ] 权限校验注解
+- [ ] 401 / 403 错误处理
 
 ## 文档
 
@@ -118,7 +125,7 @@ test: add user service tests
 
 ## 本地启动
 
-当前项目已经创建 Spring Boot 基础骨架、通用基础能力、数据库初始化迁移、用户管理接口和部门管理接口。
+当前项目已经创建 Spring Boot 基础骨架、通用基础能力、数据库初始化迁移、用户管理、部门管理、角色管理、菜单管理和 RBAC 核心接口。
 
 ### 本地环境变量
 
@@ -146,7 +153,7 @@ mvn spring-boot:run
 http://localhost:8080
 ```
 
-`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理、基础配置、用户模块和部门模块。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
+`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理、基础配置、用户模块、部门模块、角色模块、菜单模块和 RBAC 关联链路。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
 
 ### 已有接口
 
@@ -159,6 +166,9 @@ POST   /api/users
 PUT    /api/users/{id}
 DELETE /api/users/{id}
 PUT    /api/users/{id}/status
+GET    /api/users/{id}/roles
+PUT    /api/users/{id}/roles
+GET    /api/users/{id}/permissions
 ```
 
 部门接口：
@@ -168,6 +178,28 @@ GET    /api/depts/tree
 POST   /api/depts
 PUT    /api/depts/{id}
 DELETE /api/depts/{id}
+```
+
+角色接口：
+
+```text
+GET    /api/roles
+GET    /api/roles/{id}
+POST   /api/roles
+PUT    /api/roles/{id}
+DELETE /api/roles/{id}
+PUT    /api/roles/{id}/status
+GET    /api/roles/{id}/menus
+PUT    /api/roles/{id}/menus
+```
+
+菜单接口：
+
+```text
+GET    /api/menus/tree
+POST   /api/menus
+PUT    /api/menus/{id}
+DELETE /api/menus/{id}
 ```
 
 ## 目录规划
