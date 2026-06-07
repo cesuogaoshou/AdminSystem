@@ -2,6 +2,7 @@ package com.example.admin.module.auth;
 
 import com.example.admin.common.Result;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,5 +21,10 @@ public class AuthController {
     @PostMapping("/login")
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return Result.ok(authService.login(request));
+    }
+
+    @GetMapping("/me")
+    public Result<CurrentUserResponse> me() {
+        return Result.ok(authService.currentUser());
     }
 }

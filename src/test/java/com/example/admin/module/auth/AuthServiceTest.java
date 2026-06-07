@@ -3,7 +3,10 @@ package com.example.admin.module.auth;
 import com.example.admin.common.BusinessException;
 import com.example.admin.module.user.User;
 import com.example.admin.module.user.UserMapper;
+import com.example.admin.security.CurrentUser;
+import com.example.admin.security.CurrentUserContext;
 import com.example.admin.security.JwtService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,6 +36,11 @@ class AuthServiceTest {
 
     @InjectMocks
     private AuthService authService;
+
+    @AfterEach
+    void tearDown() {
+        CurrentUserContext.clear();
+    }
 
     @Test
     void loginShouldReturnTokenAndUserInfoWhenCredentialsValid() {
@@ -80,6 +88,28 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.login(new LoginRequest("admin", "123456")))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("用户已被禁用");
+    }
+
+    @Test
+    void currentUserShouldReturnCurrentUserResponseWhenContextExists() {
+        CurrentUserContext.set(new CurrentUser(
+                1L,
+                "admin",
+                List.of("sys:user:list", "sys:role:list")
+        ));
+
+        CurrentUserResponse response = authService.currentUser();
+
+        assertThat(response.userId()).isEqualTo(1L);
+        assertThat(response.username()).isEqualTo("admin");
+        assertThat(response.permissions()).containsExactly("sys:user:list", "sys:role:list");
+    }
+
+    @Test
+    void currentUserShouldThrowBusinessExceptionWhenContextMissing() {
+        assertThatThrownBy(() -> authService.currentUser())
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("未登录");
     }
 
     private User adminUser(Integer status) {

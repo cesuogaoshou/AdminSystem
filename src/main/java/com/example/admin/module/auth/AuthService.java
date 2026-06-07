@@ -3,6 +3,8 @@ package com.example.admin.module.auth;
 import com.example.admin.common.BusinessException;
 import com.example.admin.module.user.User;
 import com.example.admin.module.user.UserMapper;
+import com.example.admin.security.CurrentUser;
+import com.example.admin.security.CurrentUserContext;
 import com.example.admin.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,19 @@ public class AuthService {
                 user.username(),
                 user.nickname(),
                 permissions
+        );
+    }
+
+    public CurrentUserResponse currentUser() {
+        CurrentUser currentUser = CurrentUserContext.get();
+        if (currentUser == null) {
+            throw new BusinessException(401, "未登录");
+        }
+
+        return new CurrentUserResponse(
+                currentUser.userId(),
+                currentUser.username(),
+                currentUser.permissions()
         );
     }
 }

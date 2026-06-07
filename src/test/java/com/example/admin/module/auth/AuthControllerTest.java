@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -51,5 +52,20 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.data.permissions[0]").value("sys:user:list"));
 
         verify(authService).login(new LoginRequest("admin", "123456"));
+    }
+
+    @Test
+    void meShouldReturnCurrentUser() throws Exception {
+        when(authService.currentUser()).thenReturn(new CurrentUserResponse(
+                1L,
+                "admin",
+                List.of("sys:user:list", "sys:role:list")
+        ));
+
+        mockMvc.perform(get("/api/auth/me"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.userId").value(1))
+                .andExpect(jsonPath("$.data.username").value("admin"))
+                .andExpect(jsonPath("$.data.permissions[0]").value("sys:user:list"));
     }
 }
