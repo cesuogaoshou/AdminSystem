@@ -1,6 +1,7 @@
 package com.example.admin;
 
 import com.example.admin.module.dept.DeptMapper;
+import com.example.admin.module.menu.MenuMapper;
 import com.example.admin.module.role.RoleMapper;
 import com.example.admin.module.user.UserMapper;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,9 @@ class AdminApplicationTests {
 
     @MockitoBean
     private RoleMapper roleMapper;
+
+    @MockitoBean
+    private MenuMapper menuMapper;
 
     @Test
     void contextLoads() {
