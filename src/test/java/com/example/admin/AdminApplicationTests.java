@@ -4,6 +4,7 @@ import com.example.admin.module.dept.DeptMapper;
 import com.example.admin.module.menu.MenuMapper;
 import com.example.admin.module.role.RoleMapper;
 import com.example.admin.module.user.UserMapper;
+import com.example.admin.security.TokenBlacklistService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -28,6 +29,9 @@ class AdminApplicationTests {
 
     @MockitoBean
     private MenuMapper menuMapper;
+
+    @MockitoBean
+    private TokenBlacklistService tokenBlacklistService;
 
     @Test
     void contextLoads() {

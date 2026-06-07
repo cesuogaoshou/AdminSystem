@@ -104,6 +104,7 @@ class PermissionInterceptorTest {
 
     private static final class TestController {
 
+        @SuppressWarnings("unused")
         void noPermission() {
         }
 
