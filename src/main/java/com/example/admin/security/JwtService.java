@@ -45,7 +45,14 @@ public class JwtService {
     }
 
     public List<String> getPermissions(String token) {
-        return parseClaims(token).get(PERMISSIONS_CLAIM, List.class);
+        Object permissions = parseClaims(token).get(PERMISSIONS_CLAIM);
+        if (!(permissions instanceof List<?> permissionList)) {
+            return List.of();
+        }
+
+        return permissionList.stream()
+                .map(String::valueOf)
+                .toList();
     }
 
     public boolean isTokenValid(String token) {
