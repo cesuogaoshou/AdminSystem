@@ -147,4 +147,15 @@ class UserControllerTest {
 
         verify(userService).assignRoles(org.mockito.ArgumentMatchers.eq(1L), org.mockito.ArgumentMatchers.any(UserRoleAssignRequest.class));
     }
+
+    @Test
+    void getPermissionsShouldReturnUnifiedResult() throws Exception {
+        when(userService.getPermissions(1L))
+                .thenReturn(List.of("sys:user:list", "sys:role:list"));
+
+        mockMvc.perform(get("/api/users/1/permissions"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data[0]").value("sys:user:list"))
+                .andExpect(jsonPath("$.data[1]").value("sys:role:list"));
+    }
 }

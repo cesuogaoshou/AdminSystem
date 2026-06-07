@@ -70,4 +70,9 @@ public class UserController {
         userService.assignRoles(id, request);
         return Result.ok();
     }
+
+    @GetMapping("/{id}/permissions")
+    public Result<List<String>> getPermissions(@PathVariable Long id) {
+        return Result.ok(userService.getPermissions(id));
+    }
 }
