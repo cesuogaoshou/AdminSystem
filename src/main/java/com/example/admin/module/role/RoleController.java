@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
@@ -55,6 +57,17 @@ public class RoleController {
     @PutMapping("/{id}/status")
     public Result<Void> changeStatus(@PathVariable Long id, @RequestParam Integer status) {
         roleService.changeStatus(id, status);
+        return Result.ok();
+    }
+
+    @GetMapping("/{id}/menus")
+    public Result<List<Long>> getMenuIds(@PathVariable Long id) {
+        return Result.ok(roleService.getMenuIds(id));
+    }
+
+    @PutMapping("/{id}/menus")
+    public Result<Void> assignMenus(@PathVariable Long id, @Valid @RequestBody RoleMenuAssignRequest request) {
+        roleService.assignMenus(id, request);
         return Result.ok();
     }
 }

@@ -115,4 +115,29 @@ class RoleControllerTest {
 
         verify(roleService).changeStatus(1L, 0);
     }
+
+    @Test
+    void getMenuIdsShouldReturnUnifiedResult() throws Exception {
+        when(roleService.getMenuIds(1L)).thenReturn(List.of(1L, 2L, 3L));
+
+        mockMvc.perform(get("/api/roles/1/menus"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data[0]").value(1))
+                .andExpect(jsonPath("$.data[1]").value(2))
+                .andExpect(jsonPath("$.data[2]").value(3));
+    }
+
+    @Test
+    void assignMenusShouldCallServiceAndReturnOk() throws Exception {
+        mockMvc.perform(put("/api/roles/1/menus")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "menuIds": [1, 2, 3]
+                                }
+                                """))
+                .andExpect(jsonPath("$.code").value(200));
+
+        verify(roleService).assignMenus(org.mockito.ArgumentMatchers.eq(1L), org.mockito.ArgumentMatchers.any(RoleMenuAssignRequest.class));
+    }
 }
