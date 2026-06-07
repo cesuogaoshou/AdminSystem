@@ -104,4 +104,17 @@ public class UserService {
         getById(id);
         userMapper.updateStatus(id, status);
     }
+    public List<Long> getRoleIds(Long id) {
+        getById(id);
+        return userMapper.findRoleIdsByUserId(id);
+    }
+
+    public void assignRoles(Long id, UserRoleAssignRequest request) {
+        getById(id);
+
+        userMapper.deleteRolesByUserId(id);
+        if (!request.roleIds().isEmpty()) {
+            userMapper.insertUserRoles(id, request.roleIds());
+        }
+    }
 }

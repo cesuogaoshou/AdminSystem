@@ -15,6 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -200,4 +201,55 @@ class UserServiceTest {
                 .hasMessage("用户状态不正确");
     }
 
+    @Test
+    void getRoleIdsShouldReturnUserRoleIdsWhenUserExists() {
+        when(userMapper.findById(1L)).thenReturn(adminUser());
+        when(userMapper.findRoleIdsByUserId(1L)).thenReturn(List.of(1L, 2L));
+
+        List<Long> roleIds = userService.getRoleIds(1L);
+
+        assertThat(roleIds).containsExactly(1L, 2L);
+        verify(userMapper).findRoleIdsByUserId(1L);
+    }
+
+    @Test
+    void assignRolesShouldReplaceUserRolesWhenUserExists() {
+        when(userMapper.findById(1L)).thenReturn(adminUser());
+        UserRoleAssignRequest request = new UserRoleAssignRequest(List.of(1L, 2L));
+
+        userService.assignRoles(1L, request);
+
+        verify(userMapper).deleteRolesByUserId(1L);
+        verify(userMapper).insertUserRoles(1L, List.of(1L, 2L));
+    }
+
+    @Test
+    void assignRolesShouldOnlyDeleteWhenRoleIdsIsEmpty() {
+        when(userMapper.findById(1L)).thenReturn(adminUser());
+        UserRoleAssignRequest request = new UserRoleAssignRequest(List.of());
+
+        userService.assignRoles(1L, request);
+
+        verify(userMapper).deleteRolesByUserId(1L);
+        verify(userMapper, never()).insertUserRoles(org.mockito.ArgumentMatchers.eq(1L), org.mockito.ArgumentMatchers.anyList());
+    }
+
+    @Test
+    void assignRolesShouldThrowBusinessExceptionWhenUserNotFound() {
+        when(userMapper.findById(99L)).thenReturn(null);
+        UserRoleAssignRequest request = new UserRoleAssignRequest(List.of(1L));
+
+        assertThatThrownBy(() -> userService.assignRoles(99L, request))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("用户不存在");
+    }
+
+    private User adminUser() {
+        return new User(
+                1L, "admin", "encoded-password", "管理员",
+                "admin@example.com", "10000000000", 0, null,
+                2L, 1, "system", LocalDateTime.now(),
+                "system", LocalDateTime.now(), 0
+        );
+    }
 }

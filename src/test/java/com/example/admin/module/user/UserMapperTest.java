@@ -60,4 +60,19 @@ class UserMapperTest {
         assertThat(users.getFirst().username()).isEqualTo("admin");
         assertThat(users.getFirst().deptName()).isEqualTo("技术部");
     }
+    @Test
+    void findRoleIdsByUserIdShouldReturnAdminRoleIds() {
+        List<Long> roleIds = userMapper.findRoleIdsByUserId(1L);
+
+        assertThat(roleIds).containsExactly(1L);
+    }
+
+    @Test
+    void insertUserRolesShouldCreateUserRoleRelations() {
+        userMapper.deleteRolesByUserId(1L);
+
+        userMapper.insertUserRoles(1L, List.of(1L, 2L));
+
+        assertThat(userMapper.findRoleIdsByUserId(1L)).containsExactly(1L, 2L);
+    }
 }

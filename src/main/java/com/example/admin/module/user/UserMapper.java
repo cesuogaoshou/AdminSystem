@@ -22,5 +22,11 @@ public interface UserMapper {
 
     int updateStatus(@Param("id") Long id, @Param("status") Integer status);
 
+    List<Long> findRoleIdsByUserId(@Param("userId") Long userId);
+
+    int deleteRolesByUserId(@Param("userId") Long userId);
+
+    int insertUserRoles(@Param("userId") Long userId, @Param("roleIds") List<Long> roleIds);
+
     List<UserVO> findPage(UserQueryRequest query);
 }

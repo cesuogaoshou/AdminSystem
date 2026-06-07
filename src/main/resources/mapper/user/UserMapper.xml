@@ -109,6 +109,26 @@
           AND deleted = 0
     </update>
 
+    <select id="findRoleIdsByUserId" resultType="long">
+        SELECT role_id
+        FROM sys_user_role
+        WHERE user_id = #{userId}
+        ORDER BY role_id ASC
+    </select>
+
+    <delete id="deleteRolesByUserId">
+        DELETE FROM sys_user_role
+        WHERE user_id = #{userId}
+    </delete>
+
+    <insert id="insertUserRoles">
+        INSERT INTO sys_user_role (user_id, role_id)
+        VALUES
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (#{userId}, #{roleId})
+        </foreach>
+    </insert>
+
     <select id="findPage" resultMap="UserVOResultMap">
         SELECT
             u.id,

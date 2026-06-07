@@ -6,6 +6,7 @@ import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -113,5 +114,19 @@ class UserRequestResponseTest {
         assertThat(vo.username()).isEqualTo("admin");
         assertThat(vo.deptName()).isEqualTo("技术部");
         assertThat(vo.createTime()).isEqualTo(now);
+    }
+    @Test
+    void roleAssignRequestShouldRejectNullRoleIds() {
+        UserRoleAssignRequest request = new UserRoleAssignRequest(null);
+
+        assertThat(validator.validate(request))
+                .anyMatch(violation -> violation.getMessage().equals("角色ID列表不能为空"));
+    }
+
+    @Test
+    void roleAssignRequestShouldHoldRoleIds() {
+        UserRoleAssignRequest request = new UserRoleAssignRequest(List.of(1L, 2L));
+
+        assertThat(request.roleIds()).containsExactly(1L, 2L);
     }
 }
