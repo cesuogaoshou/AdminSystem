@@ -14,17 +14,19 @@ public class AuthInterceptor implements HandlerInterceptor {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtService jwtService;
+    private final TokenBlacklistService tokenBlacklistService;
     private final ObjectMapper objectMapper;
 
-    public AuthInterceptor(JwtService jwtService) {
+    public AuthInterceptor(JwtService jwtService, TokenBlacklistService tokenBlacklistService) {
         this.jwtService = jwtService;
+        this.tokenBlacklistService = tokenBlacklistService;
         this.objectMapper = new ObjectMapper();
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = resolveToken(request);
-        if (token == null || !jwtService.isTokenValid(token)) {
+        if (token == null || !jwtService.isTokenValid(token) || isBlacklisted(token)) {
             writeUnauthorized(response);
             return false;
         }
@@ -48,6 +50,10 @@ public class AuthInterceptor implements HandlerInterceptor {
             return null;
         }
         return authorization.substring(BEARER_PREFIX.length());
+    }
+
+    private boolean isBlacklisted(String token) {
+        return tokenBlacklistService != null && tokenBlacklistService.isBlacklisted(token);
     }
 
     private void writeUnauthorized(HttpServletResponse response) throws Exception {

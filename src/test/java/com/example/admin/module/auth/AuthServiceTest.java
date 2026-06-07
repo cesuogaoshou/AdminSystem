@@ -6,6 +6,8 @@ import com.example.admin.module.user.UserMapper;
 import com.example.admin.security.CurrentUser;
 import com.example.admin.security.CurrentUserContext;
 import com.example.admin.security.JwtService;
+import com.example.admin.security.JwtProperties;
+import com.example.admin.security.TokenBlacklistService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +35,12 @@ class AuthServiceTest {
 
     @Mock
     private JwtService jwtService;
+
+    @Mock
+    private TokenBlacklistService tokenBlacklistService;
+
+    @Mock
+    private JwtProperties jwtProperties;
 
     @InjectMocks
     private AuthService authService;
@@ -108,6 +116,22 @@ class AuthServiceTest {
     @Test
     void currentUserShouldThrowBusinessExceptionWhenContextMissing() {
         assertThatThrownBy(() -> authService.currentUser())
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("未登录");
+    }
+
+    @Test
+    void logoutShouldBlacklistBearerToken() {
+        when(jwtProperties.getExpiration()).thenReturn(86400000L);
+
+        authService.logout("Bearer token-value");
+
+        verify(tokenBlacklistService).blacklist("token-value", 86400000L);
+    }
+
+    @Test
+    void logoutShouldThrowBusinessExceptionWhenTokenMissing() {
+        assertThatThrownBy(() -> authService.logout(null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("未登录");
     }

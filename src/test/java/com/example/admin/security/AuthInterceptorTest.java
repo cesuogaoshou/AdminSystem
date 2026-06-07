@@ -15,7 +15,8 @@ import static org.mockito.Mockito.when;
 class AuthInterceptorTest {
 
     private final JwtService jwtService = mock(JwtService.class);
-    private final AuthInterceptor authInterceptor = new AuthInterceptor(jwtService);
+    private final TokenBlacklistService tokenBlacklistService = mock(TokenBlacklistService.class);
+    private final AuthInterceptor authInterceptor = new AuthInterceptor(jwtService, tokenBlacklistService);
 
     @AfterEach
     void tearDown() {
@@ -42,6 +43,7 @@ class AuthInterceptorTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(request.getHeader("Authorization")).thenReturn("Bearer token-value");
         when(jwtService.isTokenValid("token-value")).thenReturn(true);
+        when(tokenBlacklistService.isBlacklisted("token-value")).thenReturn(false);
         when(jwtService.getUserId("token-value")).thenReturn(1L);
         when(jwtService.getUsername("token-value")).thenReturn("admin");
         when(jwtService.getPermissions("token-value")).thenReturn(List.of("sys:user:list"));
@@ -54,6 +56,22 @@ class AuthInterceptorTest {
                 "admin",
                 List.of("sys:user:list")
         ));
+    }
+
+    @Test
+    void preHandleShouldRejectBlacklistedToken() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(request.getHeader("Authorization")).thenReturn("Bearer token-value");
+        when(jwtService.isTokenValid("token-value")).thenReturn(true);
+        when(tokenBlacklistService.isBlacklisted("token-value")).thenReturn(true);
+
+        boolean result = authInterceptor.preHandle(request, response, new Object());
+
+        assertThat(result).isFalse();
+        assertThat(response.getStatus()).isEqualTo(401);
+        assertThat(response.getContentAsString()).contains("\"code\":401");
+        assertThat(response.getContentAsString()).contains("未登录");
     }
 
     @Test

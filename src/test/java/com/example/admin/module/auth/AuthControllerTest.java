@@ -68,4 +68,13 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.data.username").value("admin"))
                 .andExpect(jsonPath("$.data.permissions[0]").value("sys:user:list"));
     }
+
+    @Test
+    void logoutShouldCallServiceAndReturnOk() throws Exception {
+        mockMvc.perform(post("/api/auth/logout")
+                        .header("Authorization", "Bearer token-value"))
+                .andExpect(jsonPath("$.code").value(200));
+
+        verify(authService).logout("Bearer token-value");
+    }
 }
