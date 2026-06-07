@@ -28,5 +28,7 @@ public interface UserMapper {
 
     int insertUserRoles(@Param("userId") Long userId, @Param("roleIds") List<Long> roleIds);
 
+    List<String> findPermissionsByUserId(@Param("userId") Long userId);
+
     List<UserVO> findPage(UserQueryRequest query);
 }

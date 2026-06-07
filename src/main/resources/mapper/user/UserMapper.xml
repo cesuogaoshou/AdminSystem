@@ -129,6 +129,23 @@
         </foreach>
     </insert>
 
+    <select id="findPermissionsByUserId" resultType="string">
+        SELECT DISTINCT m.permission
+        FROM sys_user u
+        INNER JOIN sys_user_role ur ON u.id = ur.user_id
+        INNER JOIN sys_role r ON ur.role_id = r.id
+        INNER JOIN sys_role_menu rm ON r.id = rm.role_id
+        INNER JOIN sys_menu m ON rm.menu_id = m.id
+        WHERE u.id = #{userId}
+          AND u.deleted = 0
+          AND u.status = 1
+          AND r.status = 1
+          AND m.visible = 1
+          AND m.permission IS NOT NULL
+          AND m.permission != ''
+        ORDER BY m.permission ASC
+    </select>
+
     <select id="findPage" resultMap="UserVOResultMap">
         SELECT
             u.id,

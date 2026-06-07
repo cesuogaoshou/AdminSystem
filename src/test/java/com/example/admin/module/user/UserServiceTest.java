@@ -244,6 +244,27 @@ class UserServiceTest {
                 .hasMessage("用户不存在");
     }
 
+    @Test
+    void getPermissionsShouldReturnUserPermissionsWhenUserExists() {
+        when(userMapper.findById(1L)).thenReturn(adminUser());
+        when(userMapper.findPermissionsByUserId(1L))
+                .thenReturn(List.of("sys:user:list", "sys:role:list"));
+
+        List<String> permissions = userService.getPermissions(1L);
+
+        assertThat(permissions).containsExactly("sys:user:list", "sys:role:list");
+        verify(userMapper).findPermissionsByUserId(1L);
+    }
+
+    @Test
+    void getPermissionsShouldThrowBusinessExceptionWhenUserNotFound() {
+        when(userMapper.findById(99L)).thenReturn(null);
+
+        assertThatThrownBy(() -> userService.getPermissions(99L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("用户不存在");
+    }
+
     private User adminUser() {
         return new User(
                 1L, "admin", "encoded-password", "管理员",

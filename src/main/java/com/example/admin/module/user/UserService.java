@@ -117,4 +117,9 @@ public class UserService {
             userMapper.insertUserRoles(id, request.roleIds());
         }
     }
+
+    public List<String> getPermissions(Long id) {
+        getById(id);
+        return userMapper.findPermissionsByUserId(id);
+    }
 }

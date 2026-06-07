@@ -75,4 +75,12 @@ class UserMapperTest {
 
         assertThat(userMapper.findRoleIdsByUserId(1L)).containsExactly(1L, 2L);
     }
+
+    @Test
+    void findPermissionsByUserIdShouldReturnAdminPermissions() {
+        List<String> permissions = userMapper.findPermissionsByUserId(1L);
+
+        assertThat(permissions)
+                .contains("sys:user:list", "sys:role:list", "sys:menu:list", "sys:dept:list");
+    }
 }
