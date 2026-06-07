@@ -2,6 +2,7 @@ package com.example.admin.config;
 
 import com.example.admin.security.AuthInterceptor;
 import com.example.admin.security.JwtService;
+import com.example.admin.security.PermissionInterceptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
@@ -23,18 +24,22 @@ class WebConfigTest {
     }
 
     @Test
-    void addInterceptorsShouldRegisterAuthInterceptor() {
+    void addInterceptorsShouldRegisterSecurityInterceptors() {
         JwtService jwtService = mock(JwtService.class);
         WebConfig webConfig = new WebConfig();
         ReflectionTestUtils.setField(webConfig, "jwtService", jwtService);
         InterceptorRegistry registry = mock(InterceptorRegistry.class);
-        InterceptorRegistration registration = mock(InterceptorRegistration.class);
-        org.mockito.Mockito.when(registry.addInterceptor(any(AuthInterceptor.class))).thenReturn(registration);
-        org.mockito.Mockito.when(registration.addPathPatterns("/api/**")).thenReturn(registration);
+        InterceptorRegistration authRegistration = mock(InterceptorRegistration.class);
+        InterceptorRegistration permissionRegistration = mock(InterceptorRegistration.class);
+        org.mockito.Mockito.when(registry.addInterceptor(any(AuthInterceptor.class))).thenReturn(authRegistration);
+        org.mockito.Mockito.when(registry.addInterceptor(any(PermissionInterceptor.class))).thenReturn(permissionRegistration);
+        org.mockito.Mockito.when(authRegistration.addPathPatterns("/api/**")).thenReturn(authRegistration);
+        org.mockito.Mockito.when(permissionRegistration.addPathPatterns("/api/**")).thenReturn(permissionRegistration);
 
         webConfig.addInterceptors(registry);
 
         verify(registry).addInterceptor(any(AuthInterceptor.class));
+        verify(registry).addInterceptor(any(PermissionInterceptor.class));
     }
 
     @Test
