@@ -123,4 +123,28 @@ class UserControllerTest {
 
         verify(userService).changeStatus(1L, 0);
     }
+
+    @Test
+    void getRoleIdsShouldReturnUnifiedResult() throws Exception {
+        when(userService.getRoleIds(1L)).thenReturn(List.of(1L, 2L));
+
+        mockMvc.perform(get("/api/users/1/roles"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data[0]").value(1))
+                .andExpect(jsonPath("$.data[1]").value(2));
+    }
+
+    @Test
+    void assignRolesShouldCallServiceAndReturnOk() throws Exception {
+        mockMvc.perform(put("/api/users/1/roles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "roleIds": [1, 2]
+                                }
+                                """))
+                .andExpect(jsonPath("$.code").value(200));
+
+        verify(userService).assignRoles(org.mockito.ArgumentMatchers.eq(1L), org.mockito.ArgumentMatchers.any(UserRoleAssignRequest.class));
+    }
 }

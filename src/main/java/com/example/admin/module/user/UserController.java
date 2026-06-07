@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -55,6 +57,17 @@ public class UserController {
     @PutMapping("/{id}/status")
     public Result<Void> changeStatus(@PathVariable Long id, @RequestParam Integer status) {
         userService.changeStatus(id, status);
+        return Result.ok();
+    }
+
+    @GetMapping("/{id}/roles")
+    public Result<List<Long>> getRoleIds(@PathVariable Long id) {
+        return Result.ok(userService.getRoleIds(id));
+    }
+
+    @PutMapping("/{id}/roles")
+    public Result<Void> assignRoles(@PathVariable Long id, @Valid @RequestBody UserRoleAssignRequest request) {
+        userService.assignRoles(id, request);
         return Result.ok();
     }
 }
