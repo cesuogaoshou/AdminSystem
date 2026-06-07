@@ -67,4 +67,20 @@ class RoleMapperTest {
 
         assertThat(count).isEqualTo(1);
     }
+
+    @Test
+    void findMenuIdsByRoleIdShouldReturnAdminMenuIds() {
+        List<Long> menuIds = roleMapper.findMenuIdsByRoleId(1L);
+
+        assertThat(menuIds).contains(1L, 2L, 6L, 10L, 14L);
+    }
+
+    @Test
+    void insertRoleMenusShouldCreateRoleMenuRelations() {
+        roleMapper.deleteMenusByRoleId(2L);
+
+        roleMapper.insertRoleMenus(2L, List.of(1L, 2L));
+
+        assertThat(roleMapper.findMenuIdsByRoleId(2L)).containsExactly(1L, 2L);
+    }
 }

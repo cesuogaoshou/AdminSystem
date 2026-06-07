@@ -5,6 +5,7 @@ import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,5 +72,20 @@ class RoleRequestResponseTest {
         assertThat(roleVO.name()).isEqualTo("超级管理员");
         assertThat(roleVO.code()).isEqualTo("admin");
         assertThat(roleVO.createTime()).isEqualTo(now);
+    }
+
+    @Test
+    void menuAssignRequestShouldRejectNullMenuIds() {
+        RoleMenuAssignRequest request = new RoleMenuAssignRequest(null);
+
+        assertThat(validator.validate(request))
+                .anyMatch(violation -> violation.getMessage().equals("菜单ID列表不能为空"));
+    }
+
+    @Test
+    void menuAssignRequestShouldHoldMenuIds() {
+        RoleMenuAssignRequest request = new RoleMenuAssignRequest(List.of(1L, 2L, 3L));
+
+        assertThat(request.menuIds()).containsExactly(1L, 2L, 3L);
     }
 }

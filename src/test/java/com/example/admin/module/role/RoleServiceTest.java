@@ -14,6 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -190,6 +191,49 @@ class RoleServiceTest {
         assertThatThrownBy(() -> roleService.changeStatus(1L, 9))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("角色状态不正确");
+    }
+
+    @Test
+    void getMenuIdsShouldReturnRoleMenuIdsWhenRoleExists() {
+        when(roleMapper.findById(1L)).thenReturn(adminRole());
+        when(roleMapper.findMenuIdsByRoleId(1L)).thenReturn(List.of(1L, 2L, 3L));
+
+        List<Long> menuIds = roleService.getMenuIds(1L);
+
+        assertThat(menuIds).containsExactly(1L, 2L, 3L);
+        verify(roleMapper).findMenuIdsByRoleId(1L);
+    }
+
+    @Test
+    void assignMenusShouldReplaceRoleMenusWhenRoleExists() {
+        when(roleMapper.findById(1L)).thenReturn(adminRole());
+        RoleMenuAssignRequest request = new RoleMenuAssignRequest(List.of(1L, 2L, 3L));
+
+        roleService.assignMenus(1L, request);
+
+        verify(roleMapper).deleteMenusByRoleId(1L);
+        verify(roleMapper).insertRoleMenus(1L, List.of(1L, 2L, 3L));
+    }
+
+    @Test
+    void assignMenusShouldOnlyDeleteWhenMenuIdsIsEmpty() {
+        when(roleMapper.findById(1L)).thenReturn(adminRole());
+        RoleMenuAssignRequest request = new RoleMenuAssignRequest(List.of());
+
+        roleService.assignMenus(1L, request);
+
+        verify(roleMapper).deleteMenusByRoleId(1L);
+        verify(roleMapper, never()).insertRoleMenus(org.mockito.ArgumentMatchers.eq(1L), org.mockito.ArgumentMatchers.anyList());
+    }
+
+    @Test
+    void assignMenusShouldThrowBusinessExceptionWhenRoleNotFound() {
+        when(roleMapper.findById(99L)).thenReturn(null);
+        RoleMenuAssignRequest request = new RoleMenuAssignRequest(List.of(1L));
+
+        assertThatThrownBy(() -> roleService.assignMenus(99L, request))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("角色不存在");
     }
 
     private Role adminRole() {

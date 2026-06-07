@@ -86,6 +86,26 @@
         WHERE role_id = #{roleId}
     </select>
 
+    <select id="findMenuIdsByRoleId" resultType="long">
+        SELECT menu_id
+        FROM sys_role_menu
+        WHERE role_id = #{roleId}
+        ORDER BY menu_id ASC
+    </select>
+
+    <delete id="deleteMenusByRoleId">
+        DELETE FROM sys_role_menu
+        WHERE role_id = #{roleId}
+    </delete>
+
+    <insert id="insertRoleMenus">
+        INSERT INTO sys_role_menu (role_id, menu_id)
+        VALUES
+        <foreach collection="menuIds" item="menuId" separator=",">
+            (#{roleId}, #{menuId})
+        </foreach>
+    </insert>
+
     <select id="findPage" resultMap="RoleVOResultMap">
         SELECT
             id, name, code, description, status, sort_order, create_time

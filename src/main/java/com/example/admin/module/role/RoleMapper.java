@@ -24,5 +24,11 @@ public interface RoleMapper {
 
     int countUsersByRoleId(@Param("roleId") Long roleId);
 
+    List<Long> findMenuIdsByRoleId(@Param("roleId") Long roleId);
+
+    int deleteMenusByRoleId(@Param("roleId") Long roleId);
+
+    int insertRoleMenus(@Param("roleId") Long roleId, @Param("menuIds") List<Long> menuIds);
+
     List<RoleVO> findPage(RoleQueryRequest query);
 }

@@ -94,4 +94,18 @@ public class RoleService {
         getById(id);
         roleMapper.updateStatus(id, status);
     }
+
+    public List<Long> getMenuIds(Long id) {
+        getById(id);
+        return roleMapper.findMenuIdsByRoleId(id);
+    }
+
+    public void assignMenus(Long id, RoleMenuAssignRequest request) {
+        getById(id);
+
+        roleMapper.deleteMenusByRoleId(id);
+        if (!request.menuIds().isEmpty()) {
+            roleMapper.insertRoleMenus(id, request.menuIds());
+        }
+    }
 }
