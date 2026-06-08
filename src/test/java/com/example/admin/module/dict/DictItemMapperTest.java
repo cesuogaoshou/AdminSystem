@@ -35,6 +35,15 @@ class DictItemMapperTest {
     }
 
     @Test
+    void findByTypeCodeShouldReturnEnabledItems() {
+        List<DictItem> items = dictItemMapper.findByTypeCode("gender");
+
+        assertThat(items)
+                .extracting(DictItem::label)
+                .containsExactly("未知", "男", "女");
+    }
+
+    @Test
     void findByIdShouldReturnDictItem() {
         DictItem dictItem = dictItemMapper.findById(1L);
 

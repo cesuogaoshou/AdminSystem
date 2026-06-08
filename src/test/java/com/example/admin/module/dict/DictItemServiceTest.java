@@ -25,6 +25,9 @@ class DictItemServiceTest {
     @Mock
     private DictTypeMapper dictTypeMapper;
 
+    @Mock
+    private DictCacheService dictCacheService;
+
     @InjectMocks
     private DictItemService dictItemService;
 
@@ -55,6 +58,7 @@ class DictItemServiceTest {
                         && item.sortOrder().equals(0)
                         && item.status().equals(1)
         ));
+        verify(dictCacheService).evictItems("status");
     }
 
     @Test
@@ -74,6 +78,7 @@ class DictItemServiceTest {
         DictItemSaveRequest request = new DictItemSaveRequest("男-更新", "1", "cyan", 2, 0);
         when(dictItemMapper.findById(1L)).thenReturn(existing);
         when(dictItemMapper.findByTypeIdAndValue(1L, "1")).thenReturn(existing);
+        when(dictTypeMapper.findById(1L)).thenReturn(dictType());
 
         dictItemService.update(1L, request);
 
@@ -86,6 +91,7 @@ class DictItemServiceTest {
                         && item.sortOrder().equals(2)
                         && item.status().equals(0)
         ));
+        verify(dictCacheService).evictItems("gender");
     }
 
     @Test
@@ -101,10 +107,44 @@ class DictItemServiceTest {
     @Test
     void deleteShouldDeleteDictItemWhenExists() {
         when(dictItemMapper.findById(1L)).thenReturn(dictItem());
+        when(dictTypeMapper.findById(1L)).thenReturn(dictType());
 
         dictItemService.delete(1L);
 
         verify(dictItemMapper).deleteById(1L);
+        verify(dictCacheService).evictItems("gender");
+    }
+
+    @Test
+    void listByTypeCodeShouldReturnCachedItemsWhenCacheExists() {
+        when(dictCacheService.getItems("gender")).thenReturn(List.of(dictItem()));
+
+        List<DictItem> result = dictItemService.listByTypeCode("gender");
+
+        assertThat(result).containsExactly(dictItem());
+    }
+
+    @Test
+    void listByTypeCodeShouldQueryDatabaseAndCacheWhenCacheMissing() {
+        when(dictCacheService.getItems("gender")).thenReturn(null);
+        when(dictTypeMapper.findByCode("gender")).thenReturn(dictType());
+        when(dictItemMapper.findByTypeCode("gender")).thenReturn(List.of(dictItem()));
+
+        List<DictItem> result = dictItemService.listByTypeCode("gender");
+
+        assertThat(result).containsExactly(dictItem());
+        verify(dictItemMapper).findByTypeCode("gender");
+        verify(dictCacheService).putItems("gender", List.of(dictItem()));
+    }
+
+    @Test
+    void listByTypeCodeShouldThrowBusinessExceptionWhenTypeCodeMissing() {
+        when(dictCacheService.getItems("missing")).thenReturn(null);
+        when(dictTypeMapper.findByCode("missing")).thenReturn(null);
+
+        assertThatThrownBy(() -> dictItemService.listByTypeCode("missing"))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("字典类型不存在");
     }
 
     private DictType dictType() {
@@ -112,7 +152,7 @@ class DictItemServiceTest {
     }
 
     private DictItem dictItem() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.of(2026, 6, 8, 19, 0);
         return new DictItem(1L, 1L, "男", "1", "blue", 1, 1, now, now);
     }
 }

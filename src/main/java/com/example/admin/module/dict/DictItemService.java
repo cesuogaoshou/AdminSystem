@@ -10,15 +10,36 @@ public class DictItemService {
 
     private final DictItemMapper dictItemMapper;
     private final DictTypeMapper dictTypeMapper;
+    private final DictCacheService dictCacheService;
 
-    public DictItemService(DictItemMapper dictItemMapper, DictTypeMapper dictTypeMapper) {
+    public DictItemService(
+            DictItemMapper dictItemMapper,
+            DictTypeMapper dictTypeMapper,
+            DictCacheService dictCacheService
+    ) {
         this.dictItemMapper = dictItemMapper;
         this.dictTypeMapper = dictTypeMapper;
+        this.dictCacheService = dictCacheService;
     }
 
     public List<DictItem> listByTypeId(Long typeId) {
         ensureTypeExists(typeId);
         return dictItemMapper.findByTypeId(typeId);
+    }
+
+    public List<DictItem> listByTypeCode(String typeCode) {
+        List<DictItem> cachedItems = dictCacheService.getItems(typeCode);
+        if (cachedItems != null) {
+            return cachedItems;
+        }
+
+        if (dictTypeMapper.findByCode(typeCode) == null) {
+            throw new BusinessException(404, "字典类型不存在");
+        }
+
+        List<DictItem> items = dictItemMapper.findByTypeCode(typeCode);
+        dictCacheService.putItems(typeCode, items);
+        return items;
     }
 
     public void create(Long typeId, DictItemSaveRequest request) {
@@ -40,6 +61,7 @@ public class DictItemService {
         );
 
         dictItemMapper.insert(dictItem);
+        evictTypeItems(typeId);
     }
 
     public void update(Long id, DictItemSaveRequest request) {
@@ -66,18 +88,28 @@ public class DictItemService {
         );
 
         dictItemMapper.update(dictItem);
+        evictTypeItems(existing.typeId());
     }
 
     public void delete(Long id) {
-        if (dictItemMapper.findById(id) == null) {
+        DictItem existing = dictItemMapper.findById(id);
+        if (existing == null) {
             throw new BusinessException(404, "字典项不存在");
         }
         dictItemMapper.deleteById(id);
+        evictTypeItems(existing.typeId());
     }
 
     private void ensureTypeExists(Long typeId) {
         if (dictTypeMapper.findById(typeId) == null) {
             throw new BusinessException(404, "字典类型不存在");
+        }
+    }
+
+    private void evictTypeItems(Long typeId) {
+        DictType dictType = dictTypeMapper.findById(typeId);
+        if (dictType != null) {
+            dictCacheService.evictItems(dictType.code());
         }
     }
 }

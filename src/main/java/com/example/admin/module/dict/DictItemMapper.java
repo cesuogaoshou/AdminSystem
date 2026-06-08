@@ -10,6 +10,8 @@ public interface DictItemMapper {
 
     List<DictItem> findByTypeId(@Param("typeId") Long typeId);
 
+    List<DictItem> findByTypeCode(@Param("typeCode") String typeCode);
+
     DictItem findById(@Param("id") Long id);
 
     DictItem findByTypeIdAndValue(@Param("typeId") Long typeId, @Param("value") String value);

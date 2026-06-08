@@ -40,6 +40,16 @@ class DictItemControllerTest {
     }
 
     @Test
+    void listByTypeCodeShouldReturnUnifiedResult() throws Exception {
+        when(dictItemService.listByTypeCode("gender")).thenReturn(List.of(dictItem()));
+
+        mockMvc.perform(get("/api/dict-items")
+                        .param("typeCode", "gender"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data[0].label").value("男"));
+    }
+
+    @Test
     void createShouldCallServiceAndReturnOk() throws Exception {
         mockMvc.perform(post("/api/dict-types/1/items")
                         .contentType(MediaType.APPLICATION_JSON)

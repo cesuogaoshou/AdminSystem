@@ -22,6 +22,9 @@ class DictTypeServiceTest {
     @Mock
     private DictTypeMapper dictTypeMapper;
 
+    @Mock
+    private DictCacheService dictCacheService;
+
     @InjectMocks
     private DictTypeService dictTypeService;
 
@@ -96,6 +99,7 @@ class DictTypeServiceTest {
                         && dictType.description().equals("更新描述")
                         && dictType.status().equals(0)
         ));
+        verify(dictCacheService).evictItems("gender");
     }
 
     @Test
@@ -119,6 +123,7 @@ class DictTypeServiceTest {
         dictTypeService.delete(1L);
 
         verify(dictTypeMapper).deleteById(1L);
+        verify(dictCacheService).evictItems("gender");
     }
 
     @Test

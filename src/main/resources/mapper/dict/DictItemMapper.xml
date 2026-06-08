@@ -26,6 +26,16 @@
         ORDER BY sort_order ASC, id ASC
     </select>
 
+    <select id="findByTypeCode" resultMap="DictItemResultMap">
+        SELECT i.id, i.type_id, i.label, i.value, i.color, i.sort_order, i.status, i.create_time, i.update_time
+        FROM sys_dict_item i
+        INNER JOIN sys_dict_type t ON i.type_id = t.id
+        WHERE t.code = #{typeCode}
+          AND t.status = 1
+          AND i.status = 1
+        ORDER BY i.sort_order ASC, i.id ASC
+    </select>
+
     <select id="findById" resultMap="DictItemResultMap">
         SELECT id, type_id, label, value, color, sort_order, status, create_time, update_time
         FROM sys_dict_item

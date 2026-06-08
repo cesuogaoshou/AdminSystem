@@ -9,9 +9,11 @@ import java.util.List;
 public class DictTypeService {
 
     private final DictTypeMapper dictTypeMapper;
+    private final DictCacheService dictCacheService;
 
-    public DictTypeService(DictTypeMapper dictTypeMapper) {
+    public DictTypeService(DictTypeMapper dictTypeMapper, DictCacheService dictCacheService) {
         this.dictTypeMapper = dictTypeMapper;
+        this.dictCacheService = dictCacheService;
     }
 
     public List<DictType> list() {
@@ -62,13 +64,15 @@ public class DictTypeService {
         );
 
         dictTypeMapper.update(dictType);
+        dictCacheService.evictItems(existing.code());
     }
 
     public void delete(Long id) {
-        getById(id);
+        DictType existing = getById(id);
         if (dictTypeMapper.countItemsByTypeId(id) > 0) {
             throw new BusinessException(400, "字典类型下存在字典项，不能删除");
         }
         dictTypeMapper.deleteById(id);
+        dictCacheService.evictItems(existing.code());
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,6 +28,11 @@ public class DictItemController {
     @RequirePermission("sys:dict:list")
     public Result<List<DictItem>> listByTypeId(@PathVariable Long typeId) {
         return Result.ok(dictItemService.listByTypeId(typeId));
+    }
+
+    @GetMapping("/api/dict-items")
+    public Result<List<DictItem>> listByTypeCode(@RequestParam String typeCode) {
+        return Result.ok(dictItemService.listByTypeCode(typeCode));
     }
 
     @PostMapping("/api/dict-types/{typeId}/items")
