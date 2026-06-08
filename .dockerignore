@@ -1,0 +1,28 @@
+# Git / IDE
+.git/
+.idea/
+.vscode/
+*.iml
+
+# Build output
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Local files
+.env
+*.local
+application-local.yml
+application-secret.yml
+
+# Local notes and temp files
+docs/
+logs/
+data/
+tmp/
+
+# OS
+.DS_Store
+Thumbs.db
