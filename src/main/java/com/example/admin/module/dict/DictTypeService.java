@@ -66,6 +66,9 @@ public class DictTypeService {
 
     public void delete(Long id) {
         getById(id);
+        if (dictTypeMapper.countItemsByTypeId(id) > 0) {
+            throw new BusinessException(400, "字典类型下存在字典项，不能删除");
+        }
         dictTypeMapper.deleteById(id);
     }
 }

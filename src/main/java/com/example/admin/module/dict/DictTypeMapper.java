@@ -18,5 +18,7 @@ public interface DictTypeMapper {
 
     int update(DictType dictType);
 
+    int countItemsByTypeId(@Param("typeId") Long typeId);
+
     int deleteById(@Param("id") Long id);
 }

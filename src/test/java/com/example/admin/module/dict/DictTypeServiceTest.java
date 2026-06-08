@@ -114,10 +114,21 @@ class DictTypeServiceTest {
     @Test
     void deleteShouldDeleteDictTypeWhenExists() {
         when(dictTypeMapper.findById(1L)).thenReturn(dictType());
+        when(dictTypeMapper.countItemsByTypeId(1L)).thenReturn(0);
 
         dictTypeService.delete(1L);
 
         verify(dictTypeMapper).deleteById(1L);
+    }
+
+    @Test
+    void deleteShouldThrowBusinessExceptionWhenDictTypeHasItems() {
+        when(dictTypeMapper.findById(1L)).thenReturn(dictType());
+        when(dictTypeMapper.countItemsByTypeId(1L)).thenReturn(3);
+
+        assertThatThrownBy(() -> dictTypeService.delete(1L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("字典类型下存在字典项，不能删除");
     }
 
     private DictType dictType() {

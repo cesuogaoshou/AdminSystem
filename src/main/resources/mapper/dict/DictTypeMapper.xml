@@ -53,6 +53,12 @@
         WHERE id = #{id}
     </update>
 
+    <select id="countItemsByTypeId" resultType="int">
+        SELECT COUNT(*)
+        FROM sys_dict_item
+        WHERE type_id = #{typeId}
+    </select>
+
     <delete id="deleteById">
         DELETE FROM sys_dict_type
         WHERE id = #{id}

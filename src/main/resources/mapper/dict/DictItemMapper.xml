@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.admin.module.dict.DictItemMapper">
+
+    <resultMap id="DictItemResultMap" type="com.example.admin.module.dict.DictItem">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long"/>
+            <arg column="type_id" javaType="java.lang.Long"/>
+            <arg column="label" javaType="java.lang.String"/>
+            <arg column="value" javaType="java.lang.String"/>
+            <arg column="color" javaType="java.lang.String"/>
+            <arg column="sort_order" javaType="java.lang.Integer"/>
+            <arg column="status" javaType="java.lang.Integer"/>
+            <arg column="create_time" javaType="java.time.LocalDateTime"/>
+            <arg column="update_time" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findByTypeId" resultMap="DictItemResultMap">
+        SELECT id, type_id, label, value, color, sort_order, status, create_time, update_time
+        FROM sys_dict_item
+        WHERE type_id = #{typeId}
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="findById" resultMap="DictItemResultMap">
+        SELECT id, type_id, label, value, color, sort_order, status, create_time, update_time
+        FROM sys_dict_item
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByTypeIdAndValue" resultMap="DictItemResultMap">
+        SELECT id, type_id, label, value, color, sort_order, status, create_time, update_time
+        FROM sys_dict_item
+        WHERE type_id = #{typeId}
+          AND value = #{value}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sys_dict_item (
+            id, type_id, label, value, color, sort_order, status
+        ) VALUES (
+            #{id}, #{typeId}, #{label}, #{value}, #{color}, #{sortOrder}, #{status}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE sys_dict_item
+        SET
+            label = #{label},
+            value = #{value},
+            color = #{color},
+            sort_order = #{sortOrder},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM sys_dict_item
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
