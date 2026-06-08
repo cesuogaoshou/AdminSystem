@@ -38,7 +38,7 @@
 
 ## 当前进度
 
-当前阶段：操作日志与数据字典已完成，下一阶段进入部署与收尾。
+当前阶段：部署与收尾进行中。
 
 已完成：
 
@@ -101,11 +101,12 @@
 - [x] 添加字典项管理
 - [x] 添加 Redis 字典缓存
 - [x] 完成字典变更缓存失效
+- [x] 添加 Dockerfile
+- [x] 添加 docker-compose.yml
+- [x] 添加 `.env.example`
 
 下一阶段：
 
-- [ ] Dockerfile
-- [ ] docker-compose.yml
 - [ ] MySQL、Redis、RabbitMQ、App 一键启动
 - [ ] README 部署说明
 - [ ] 接口文档访问说明
@@ -170,6 +171,93 @@ http://localhost:8080
 ```
 
 `mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理、基础配置、用户模块、部门模块、角色模块、菜单模块、RBAC 关联链路、登录认证、JWT、当前用户上下文、认证拦截、权限拦截、token 黑名单、操作日志、RabbitMQ 日志异步链路、数据字典和 Redis 字典缓存。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
+
+## Docker Compose 启动
+
+先复制环境变量模板：
+
+```powershell
+copy .env.example .env
+```
+
+编辑 `.env`，至少修改：
+
+```text
+MYSQL_ROOT_PASSWORD
+ADMIN_DB_PASSWORD
+JWT_SECRET
+```
+
+其中 `ADMIN_DB_PASSWORD` 要和 `MYSQL_ROOT_PASSWORD` 保持一致，应用容器会使用它连接 MySQL。
+
+启动完整环境：
+
+```bash
+docker compose up -d --build
+```
+
+查看容器状态：
+
+```bash
+docker compose ps
+```
+
+查看应用日志：
+
+```bash
+docker compose logs -f admin-system
+```
+
+停止环境：
+
+```bash
+docker compose down
+```
+
+如果要同时删除 MySQL、Redis、RabbitMQ 的本地数据卷：
+
+```bash
+docker compose down -v
+```
+
+Compose 启动后服务地址：
+
+| 服务 | 地址 |
+|------|------|
+| 应用 | http://localhost:8080 |
+| MySQL | localhost:3306 |
+| Redis | localhost:6379 |
+| RabbitMQ AMQP | localhost:5672 |
+| RabbitMQ 管理台 | http://localhost:15672 |
+
+RabbitMQ 管理台账号密码来自 `.env`：
+
+```text
+RABBITMQ_USERNAME
+RABBITMQ_PASSWORD
+```
+
+## 接口文档
+
+启动应用后可访问：
+
+```text
+http://localhost:8080/doc.html
+http://localhost:8080/swagger-ui.html
+http://localhost:8080/v3/api-docs
+```
+
+如果接口需要登录，先调用：
+
+```text
+POST /api/auth/login
+```
+
+拿到 token 后，在请求头中携带：
+
+```text
+Authorization: Bearer <token>
+```
 
 ### 已有接口
 
@@ -246,6 +334,32 @@ GET    /api/dict-items?typeCode={code}
 PUT    /api/dict-items/{id}
 DELETE /api/dict-items/{id}
 ```
+
+## 验收清单
+
+本地开发验收：
+
+- [ ] `mvn test` 通过
+- [ ] `$env:ADMIN_DB_PASSWORD` 已设置
+- [ ] `mvn spring-boot:run` 能启动
+- [ ] Flyway 能自动建表并插入初始数据
+- [ ] 登录接口能返回 JWT
+- [ ] 未登录访问受保护接口返回 401
+- [ ] 无权限访问受保护接口返回 403
+- [ ] 登出后旧 token 失效
+- [ ] 操作日志能异步写入 `sys_log`
+- [ ] 字典按 `typeCode` 查询能走 Redis 缓存
+
+Docker Compose 验收：
+
+- [ ] `.env` 已由 `.env.example` 创建
+- [ ] `.env` 中没有使用默认示例密码
+- [ ] `docker compose up -d --build` 能启动
+- [ ] `docker compose ps` 中服务状态正常
+- [ ] 应用日志无启动异常
+- [ ] `http://localhost:8080/actuator/health` 可访问
+- [ ] RabbitMQ 管理台可访问
+- [ ] `docker compose down` 能正常停止
 
 ## 目录规划
 
