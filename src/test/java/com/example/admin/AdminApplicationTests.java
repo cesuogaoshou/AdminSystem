@@ -1,6 +1,7 @@
 package com.example.admin;
 
 import com.example.admin.module.dept.DeptMapper;
+import com.example.admin.module.log.LogMapper;
 import com.example.admin.module.menu.MenuMapper;
 import com.example.admin.module.role.RoleMapper;
 import com.example.admin.module.user.UserMapper;
@@ -29,6 +30,9 @@ class AdminApplicationTests {
 
     @MockitoBean
     private MenuMapper menuMapper;
+
+    @MockitoBean
+    private LogMapper logMapper;
 
     @MockitoBean
     private TokenBlacklistService tokenBlacklistService;
