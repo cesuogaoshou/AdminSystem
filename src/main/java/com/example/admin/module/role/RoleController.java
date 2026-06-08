@@ -2,6 +2,7 @@ package com.example.admin.module.role;
 
 import com.example.admin.common.PageResult;
 import com.example.admin.common.Result;
+import com.example.admin.module.log.OperationLog;
 import com.example.admin.security.RequirePermission;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +42,7 @@ public class RoleController {
 
     @PostMapping
     @RequirePermission("sys:role:add")
+    @OperationLog(module = "角色管理", operation = "新增角色")
     public Result<Void> create(@Valid @RequestBody RoleSaveRequest request) {
         roleService.create(request);
         return Result.ok();
@@ -48,6 +50,7 @@ public class RoleController {
 
     @PutMapping("/{id}")
     @RequirePermission("sys:role:update")
+    @OperationLog(module = "角色管理", operation = "修改角色")
     public Result<Void> update(@PathVariable Long id, @Valid @RequestBody RoleSaveRequest request) {
         roleService.update(id, request);
         return Result.ok();
@@ -55,6 +58,7 @@ public class RoleController {
 
     @DeleteMapping("/{id}")
     @RequirePermission("sys:role:delete")
+    @OperationLog(module = "角色管理", operation = "删除角色")
     public Result<Void> delete(@PathVariable Long id) {
         roleService.delete(id);
         return Result.ok();
@@ -62,6 +66,7 @@ public class RoleController {
 
     @PutMapping("/{id}/status")
     @RequirePermission("sys:role:update")
+    @OperationLog(module = "角色管理", operation = "修改角色状态")
     public Result<Void> changeStatus(@PathVariable Long id, @RequestParam Integer status) {
         roleService.changeStatus(id, status);
         return Result.ok();
@@ -75,6 +80,7 @@ public class RoleController {
 
     @PutMapping("/{id}/menus")
     @RequirePermission("sys:role:update")
+    @OperationLog(module = "角色管理", operation = "分配角色菜单")
     public Result<Void> assignMenus(@PathVariable Long id, @Valid @RequestBody RoleMenuAssignRequest request) {
         roleService.assignMenus(id, request);
         return Result.ok();

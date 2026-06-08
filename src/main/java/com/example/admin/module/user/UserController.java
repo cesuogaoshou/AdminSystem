@@ -2,6 +2,7 @@ package com.example.admin.module.user;
 
 import com.example.admin.common.PageResult;
 import com.example.admin.common.Result;
+import com.example.admin.module.log.OperationLog;
 import com.example.admin.security.RequirePermission;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +42,7 @@ public class UserController {
 
     @PostMapping
     @RequirePermission("sys:user:add")
+    @OperationLog(module = "用户管理", operation = "新增用户")
     public Result<Void> create(@Valid @RequestBody UserSaveRequest request) {
         userService.create(request);
         return Result.ok();
@@ -48,6 +50,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     @RequirePermission("sys:user:update")
+    @OperationLog(module = "用户管理", operation = "修改用户")
     public Result<Void> update(@PathVariable Long id, @Valid @RequestBody UserSaveRequest request) {
         userService.update(id, request);
         return Result.ok();
@@ -55,6 +58,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @RequirePermission("sys:user:delete")
+    @OperationLog(module = "用户管理", operation = "删除用户")
     public Result<Void> delete(@PathVariable Long id) {
         userService.delete(id);
         return Result.ok();
@@ -62,6 +66,7 @@ public class UserController {
 
     @PutMapping("/{id}/status")
     @RequirePermission("sys:user:update")
+    @OperationLog(module = "用户管理", operation = "修改用户状态")
     public Result<Void> changeStatus(@PathVariable Long id, @RequestParam Integer status) {
         userService.changeStatus(id, status);
         return Result.ok();
@@ -75,6 +80,7 @@ public class UserController {
 
     @PutMapping("/{id}/roles")
     @RequirePermission("sys:user:update")
+    @OperationLog(module = "用户管理", operation = "分配用户角色")
     public Result<Void> assignRoles(@PathVariable Long id, @Valid @RequestBody UserRoleAssignRequest request) {
         userService.assignRoles(id, request);
         return Result.ok();

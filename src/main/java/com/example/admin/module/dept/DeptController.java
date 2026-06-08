@@ -1,6 +1,7 @@
 package com.example.admin.module.dept;
 
 import com.example.admin.common.Result;
+import com.example.admin.module.log.OperationLog;
 import com.example.admin.security.RequirePermission;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +33,7 @@ public class DeptController {
 
     @PostMapping
     @RequirePermission("sys:dept:add")
+    @OperationLog(module = "部门管理", operation = "新增部门")
     public Result<Void> create(@Valid @RequestBody DeptSaveRequest request) {
         deptService.create(request);
         return Result.ok();
@@ -39,6 +41,7 @@ public class DeptController {
 
     @PutMapping("/{id}")
     @RequirePermission("sys:dept:update")
+    @OperationLog(module = "部门管理", operation = "修改部门")
     public Result<Void> update(@PathVariable Long id, @Valid @RequestBody DeptSaveRequest request) {
         deptService.update(id, request);
         return Result.ok();
@@ -46,6 +49,7 @@ public class DeptController {
 
     @DeleteMapping("/{id}")
     @RequirePermission("sys:dept:delete")
+    @OperationLog(module = "部门管理", operation = "删除部门")
     public Result<Void> delete(@PathVariable Long id) {
         deptService.delete(id);
         return Result.ok();
