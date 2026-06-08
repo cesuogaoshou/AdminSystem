@@ -18,11 +18,11 @@ public class OperationLogAspect {
 
     private static final String UNKNOWN = "unknown";
 
-    private final LogService logService;
+    private final LogPublisher logPublisher;
     private final ObjectMapper objectMapper;
 
-    public OperationLogAspect(LogService logService) {
-        this.logService = logService;
+    public OperationLogAspect(LogPublisher logPublisher) {
+        this.logPublisher = logPublisher;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -64,7 +64,7 @@ public class OperationLogAspect {
                 null
         );
 
-        logService.save(sysLog);
+        logPublisher.publish(sysLog);
     }
 
     private String currentUsername() {

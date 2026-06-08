@@ -5,6 +5,7 @@ import com.example.admin.module.dict.DictCacheService;
 import com.example.admin.module.dict.DictItemMapper;
 import com.example.admin.module.dict.DictTypeMapper;
 import com.example.admin.module.log.LogMapper;
+import com.example.admin.module.log.LogPublisher;
 import com.example.admin.module.menu.MenuMapper;
 import com.example.admin.module.role.RoleMapper;
 import com.example.admin.module.user.UserMapper;
@@ -36,6 +37,9 @@ class AdminApplicationTests {
 
     @MockitoBean
     private LogMapper logMapper;
+
+    @MockitoBean
+    private LogPublisher logPublisher;
 
     @MockitoBean
     private DictTypeMapper dictTypeMapper;

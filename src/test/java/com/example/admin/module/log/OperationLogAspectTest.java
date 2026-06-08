@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class OperationLogAspectTest {
 
     @Mock
-    private LogService logService;
+    private LogPublisher logPublisher;
 
     @Mock
     private ProceedingJoinPoint joinPoint;
@@ -43,14 +43,14 @@ class OperationLogAspectTest {
         OperationLog operationLog = operationLog("createUser");
         when(joinPoint.getArgs()).thenReturn(new Object[]{"test_user"});
         when(joinPoint.proceed()).thenReturn("ok");
-        OperationLogAspect aspect = new OperationLogAspect(logService);
+        OperationLogAspect aspect = new OperationLogAspect(logPublisher);
 
         Object result = aspect.around(joinPoint, operationLog);
 
         assertThat(result).isEqualTo("ok");
 
         ArgumentCaptor<SysLog> captor = ArgumentCaptor.forClass(SysLog.class);
-        verify(logService).save(captor.capture());
+        verify(logPublisher).publish(captor.capture());
         SysLog savedLog = captor.getValue();
         assertThat(savedLog.username()).isEqualTo("admin");
         assertThat(savedLog.module()).isEqualTo("用户管理");
@@ -73,13 +73,13 @@ class OperationLogAspectTest {
         IllegalStateException exception = new IllegalStateException("create failed");
         when(joinPoint.getArgs()).thenReturn(new Object[]{"test_user"});
         when(joinPoint.proceed()).thenThrow(exception);
-        OperationLogAspect aspect = new OperationLogAspect(logService);
+        OperationLogAspect aspect = new OperationLogAspect(logPublisher);
 
         assertThatThrownBy(() -> aspect.around(joinPoint, operationLog))
                 .isSameAs(exception);
 
         ArgumentCaptor<SysLog> captor = ArgumentCaptor.forClass(SysLog.class);
-        verify(logService).save(captor.capture());
+        verify(logPublisher).publish(captor.capture());
         SysLog savedLog = captor.getValue();
         assertThat(savedLog.status()).isZero();
         assertThat(savedLog.errorMsg()).isEqualTo("create failed");
