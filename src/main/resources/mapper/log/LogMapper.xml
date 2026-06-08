@@ -23,6 +23,21 @@
         </constructor>
     </resultMap>
 
+    <resultMap id="LogVOResultMap" type="com.example.admin.module.log.LogVO">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long"/>
+            <arg column="username" javaType="java.lang.String"/>
+            <arg column="module" javaType="java.lang.String"/>
+            <arg column="operation" javaType="java.lang.String"/>
+            <arg column="method" javaType="java.lang.String"/>
+            <arg column="request_url" javaType="java.lang.String"/>
+            <arg column="request_ip" javaType="java.lang.String"/>
+            <arg column="duration" javaType="java.lang.Long"/>
+            <arg column="status" javaType="java.lang.Integer"/>
+            <arg column="create_time" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
     <insert id="insert">
         INSERT INTO sys_log (
             id, username, module, operation, method, request_url, request_ip,
@@ -39,6 +54,30 @@
             params, result, duration, status, error_msg, create_time
         FROM sys_log
         WHERE id = #{id}
+    </select>
+
+    <select id="findPage" resultMap="LogVOResultMap">
+        SELECT
+            id, username, module, operation, method, request_url, request_ip,
+            duration, status, create_time
+        FROM sys_log
+        WHERE 1 = 1
+        <if test="username != null and username != ''">
+            AND username LIKE CONCAT('%', #{username}, '%')
+        </if>
+        <if test="module != null and module != ''">
+            AND module LIKE CONCAT('%', #{module}, '%')
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="startTime != null">
+            AND create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND create_time &lt;= #{endTime}
+        </if>
+        ORDER BY create_time DESC, id DESC
     </select>
 
 </mapper>

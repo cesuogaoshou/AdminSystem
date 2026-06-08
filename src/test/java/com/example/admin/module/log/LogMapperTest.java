@@ -60,4 +60,41 @@ class LogMapperTest {
         assertThat(savedLog.errorMsg()).isNull();
         assertThat(savedLog.createTime()).isNotNull();
     }
+
+    @Test
+    void findPageShouldFilterByUsernameModuleStatusAndTimeRange() {
+        SysLog sysLog = new SysLog(
+                900000000002L,
+                "admin",
+                "用户管理",
+                "修改用户",
+                "PUT",
+                "/api/users/1",
+                "127.0.0.1",
+                "{\"id\":1}",
+                "{\"code\":200}",
+                58L,
+                1,
+                null,
+                null
+        );
+        logMapper.insert(sysLog);
+        LogQueryRequest query = new LogQueryRequest(
+                1,
+                10,
+                "admin",
+                "用户",
+                1,
+                java.time.LocalDateTime.now().minusMinutes(5),
+                java.time.LocalDateTime.now().plusMinutes(5)
+        );
+
+        java.util.List<LogVO> logs = logMapper.findPage(query);
+
+        assertThat(logs)
+                .extracting(LogVO::id)
+                .contains(900000000002L);
+        assertThat(logs.getFirst().module()).isEqualTo("用户管理");
+        assertThat(logs.getFirst().operation()).isEqualTo("修改用户");
+    }
 }
