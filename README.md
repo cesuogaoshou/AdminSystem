@@ -38,7 +38,7 @@
 
 ## 当前进度
 
-当前阶段：登录认证与权限校验已完成，下一阶段进入操作日志与数据字典。
+当前阶段：操作日志与数据字典已完成，下一阶段进入部署与收尾。
 
 已完成：
 
@@ -93,15 +93,23 @@
 - [x] 添加 Redis token 黑名单
 - [x] 添加 `@RequirePermission` 权限注解
 - [x] 完成 401 / 403 错误处理
+- [x] 添加操作日志注解
+- [x] 添加 AOP 操作日志采集
+- [x] 添加 RabbitMQ 异步日志写入
+- [x] 添加日志分页查询
+- [x] 添加字典类型管理
+- [x] 添加字典项管理
+- [x] 添加 Redis 字典缓存
+- [x] 完成字典变更缓存失效
 
 下一阶段：
 
-- [ ] 操作日志注解
-- [ ] AOP 记录操作日志
-- [ ] 日志分页查询
-- [ ] 字典类型管理
-- [ ] 字典项管理
-- [ ] Redis 缓存字典数据
+- [ ] Dockerfile
+- [ ] docker-compose.yml
+- [ ] MySQL、Redis、RabbitMQ、App 一键启动
+- [ ] README 部署说明
+- [ ] 接口文档访问说明
+- [ ] 最终验收清单
 
 ## 文档
 
@@ -133,7 +141,7 @@ test: add user service tests
 
 ## 本地启动
 
-当前项目已经创建 Spring Boot 基础骨架、通用基础能力、数据库初始化迁移、用户管理、部门管理、角色管理、菜单管理、RBAC 核心接口、登录认证和权限校验。
+当前项目已经创建 Spring Boot 基础骨架、通用基础能力、数据库初始化迁移、用户管理、部门管理、角色管理、菜单管理、RBAC 核心接口、登录认证、权限校验、操作日志和数据字典。
 
 ### 本地环境变量
 
@@ -161,7 +169,7 @@ mvn spring-boot:run
 http://localhost:8080
 ```
 
-`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理、基础配置、用户模块、部门模块、角色模块、菜单模块、RBAC 关联链路、登录认证、JWT、当前用户上下文、认证拦截、权限拦截和 token 黑名单。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
+`mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理、基础配置、用户模块、部门模块、角色模块、菜单模块、RBAC 关联链路、登录认证、JWT、当前用户上下文、认证拦截、权限拦截、token 黑名单、操作日志、RabbitMQ 日志异步链路、数据字典和 Redis 字典缓存。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
 
 ### 已有接口
 
@@ -216,6 +224,27 @@ GET    /api/menus/tree
 POST   /api/menus
 PUT    /api/menus/{id}
 DELETE /api/menus/{id}
+```
+
+操作日志接口：
+
+```text
+GET    /api/logs
+```
+
+数据字典接口：
+
+```text
+GET    /api/dict-types
+GET    /api/dict-types/{id}
+POST   /api/dict-types
+PUT    /api/dict-types/{id}
+DELETE /api/dict-types/{id}
+GET    /api/dict-types/{typeId}/items
+POST   /api/dict-types/{typeId}/items
+GET    /api/dict-items?typeCode={code}
+PUT    /api/dict-items/{id}
+DELETE /api/dict-items/{id}
 ```
 
 ## 目录规划
