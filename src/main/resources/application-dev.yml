@@ -32,11 +32,10 @@ pagehelper:
   support-methods-arguments: true
 
 springdoc:
+  api-docs:
+    path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-
-knife4j:
-  enable: true
 
 jwt:
   secret: change-me-to-a-base64-encoded-secret-at-least-256-bits

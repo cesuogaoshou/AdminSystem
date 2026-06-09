@@ -31,7 +31,7 @@
 | 缓存 | Redis 7.x |
 | 消息队列 | RabbitMQ 3.13.x |
 | 认证 | JWT + BCrypt |
-| 接口文档 | Knife4j |
+| 接口文档 | Springdoc OpenAPI + Swagger UI |
 | 数据库迁移 | Flyway |
 | 测试 | JUnit 5 + AssertJ |
 | 部署 | Docker Compose |
@@ -174,6 +174,12 @@ mvn spring-boot:run
 http://localhost:8080
 ```
 
+访问根路径会自动跳转到 Swagger UI：
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
 `mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理、基础配置、用户模块、部门模块、角色模块、菜单模块、RBAC 关联链路、登录认证、JWT、当前用户上下文、认证拦截、权限拦截、token 黑名单、操作日志、RabbitMQ 日志异步链路、数据字典和 Redis 字典缓存。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
 
 ## Docker Compose 启动
@@ -246,7 +252,6 @@ RABBITMQ_PASSWORD
 启动应用后可访问：
 
 ```text
-http://localhost:8080/doc.html
 http://localhost:8080/swagger-ui.html
 http://localhost:8080/v3/api-docs
 ```
