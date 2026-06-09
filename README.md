@@ -182,6 +182,13 @@ http://localhost:8080/swagger-ui.html
 
 `mvn test` 会验证 Spring Boot 上下文、统一响应体、分页响应体、业务异常、全局异常处理、基础配置、用户模块、部门模块、角色模块、菜单模块、RBAC 关联链路、登录认证、JWT、当前用户上下文、认证拦截、权限拦截、token 黑名单、操作日志、RabbitMQ 日志异步链路、数据字典和 Redis 字典缓存。`mvn spring-boot:run` 会在开发环境连接 MySQL，并通过 Flyway 自动执行数据库迁移。
 
+开发环境初始化账号：
+
+```text
+username: admin
+password: 123456
+```
+
 ## Docker Compose 启动
 
 先复制环境变量模板：
