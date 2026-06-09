@@ -32,7 +32,14 @@ class MenuMapperTest {
         assertThat(menus).isNotEmpty();
         assertThat(menus)
                 .extracting(Menu::permission)
-                .contains("sys:user:list", "sys:role:list", "sys:menu:list", "sys:dept:list");
+                .contains(
+                        "sys:user:list",
+                        "sys:role:list",
+                        "sys:menu:list",
+                        "sys:dept:list",
+                        "sys:dict:list",
+                        "sys:log:list"
+                );
     }
 
     @Test
@@ -48,7 +55,7 @@ class MenuMapperTest {
     void countByParentIdShouldReturnChildrenCount() {
         int count = menuMapper.countByParentId(1L);
 
-        assertThat(count).isEqualTo(4);
+        assertThat(count).isEqualTo(6);
     }
 
     @Test

@@ -13,7 +13,7 @@ INSERT INTO sys_user (
 ) VALUES (
     1,
     'admin',
-    '$2a$10$DowJones7V8mShR7Rz9GjQe6fZugpU47G7r4sCU8hdVZZkwYArdOqm',
+    '$2a$10$Gc8vk0F8iLJKD6ZQ65HEr.uTUw3vjFJaQ/DEXafRUoreDo3Y0dxGq',
     '超级管理员',
     'admin@example.com',
     '10000000003',
@@ -51,7 +51,25 @@ INSERT INTO sys_menu (
 (14, 1, '部门管理', 2, '/system/depts', 'system/dept/index', 'sys:dept:list', 'dept', 4, 1),
 (15, 14, '部门新增', 3, NULL, NULL, 'sys:dept:add', NULL, 1, 1),
 (16, 14, '部门修改', 3, NULL, NULL, 'sys:dept:update', NULL, 2, 1),
-(17, 14, '部门删除', 3, NULL, NULL, 'sys:dept:delete', NULL, 3, 1);
+(17, 14, '部门删除', 3, NULL, NULL, 'sys:dept:delete', NULL, 3, 1),
+
+(18, 1, '字典管理', 2, '/system/dicts', 'system/dict/index', 'sys:dict:list', 'dict', 5, 1),
+(19, 18, '字典新增', 3, NULL, NULL, 'sys:dict:add', NULL, 1, 1),
+(20, 18, '字典修改', 3, NULL, NULL, 'sys:dict:update', NULL, 2, 1),
+(21, 18, '字典删除', 3, NULL, NULL, 'sys:dict:delete', NULL, 3, 1),
+
+(22, 1, '操作日志', 2, '/system/logs', 'system/log/index', 'sys:log:list', 'log', 6, 1);
 
 INSERT INTO sys_role_menu (role_id, menu_id)
 SELECT 1, id FROM sys_menu;
+
+INSERT INTO sys_dict_type (id, name, code, description, status) VALUES
+(1, '用户性别', 'gender', '用户性别字典', 1),
+(2, '通用状态', 'status', '启用禁用状态字典', 1);
+
+INSERT INTO sys_dict_item (type_id, label, value, color, sort_order, status) VALUES
+(1, '未知', '0', 'gray', 0, 1),
+(1, '男', '1', 'blue', 1, 1),
+(1, '女', '2', 'pink', 2, 1),
+(2, '禁用', '0', 'red', 0, 1),
+(2, '启用', '1', 'green', 1, 1);
